@@ -9,15 +9,11 @@ const DEFAULT_CONFIG = {
     cancion: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
     colorVino: '#7a2e3e',
     colorRosa: '#f9e0e0',
-    evento1Fecha: '24 de diciembre de 2025',
-    evento1Titulo: 'El inicio de todo',
-    evento1Desc: 'La primera vez que ella me habló. El mejor regalo de Navidad.',
-    evento2Fecha: '20 de enero de 2026',
-    evento2Titulo: 'Nuestra primera cita en persona',
-    evento2Desc: 'Con ese suéter azul que me regaló y que aún guardo con cariño.',
-    evento3Fecha: '19 de marzo de 2026',
-    evento3Titulo: 'El día que le pedí que fuera mi novia',
-    evento3Desc: 'Después de invitarla a comer pizza, supo que sería para siempre.',
+    eventos: [
+        { fecha: '24 de diciembre de 2025', titulo: 'El inicio de todo', desc: 'La primera vez que ella me habló. El mejor regalo de Navidad.' },
+        { fecha: '20 de enero de 2026', titulo: 'Nuestra primera cita en persona', desc: 'Con ese suéter azul que me regaló y que aún guardo con cariño.' },
+        { fecha: '19 de marzo de 2026', titulo: 'El día que le pedí que fuera mi novia', desc: 'Después de invitarla a comer pizza, supo que sería para siempre.' }
+    ],
     acordeon1Titulo: '❤️ Tu sonrisa ilumina mi mundo',
     acordeon1Contenido: 'Cuando sonríes, hasta el día más gris se vuelve soleado. Es mi razón para sonreír siempre.',
     acordeon2Titulo: '💕 Tu forma de verme',
@@ -32,17 +28,18 @@ const DEFAULT_CONFIG = {
 };
 
 // ============================================================
-// 2. CARGAR CONFIGURACIÓN DESDE localStorage
+// 2. CARGAR Y GUARDAR CONFIGURACIÓN
 // ============================================================
 function cargarConfiguracion() {
     const guardada = localStorage.getItem('miAmorConfig');
     if (guardada) {
         try {
             const config = JSON.parse(guardada);
-            // Combinar con los valores por defecto (por si faltan campos)
+            if (!config.eventos || !Array.isArray(config.eventos)) {
+                config.eventos = [...DEFAULT_CONFIG.eventos];
+            }
             return { ...DEFAULT_CONFIG, ...config };
         } catch (e) {
-            console.warn('Error al cargar configuración, usando valores por defecto');
             return { ...DEFAULT_CONFIG };
         }
     }
@@ -50,75 +47,75 @@ function cargarConfiguracion() {
 }
 
 let config = cargarConfiguracion();
+let timeoutAutoSave = null;
 
-// ============================================================
-// 3. GUARDAR CONFIGURACIÓN
-// ============================================================
 function guardarConfiguracion() {
     localStorage.setItem('miAmorConfig', JSON.stringify(config));
 }
 
+// Auto-guardado con debounce (cada 500ms después de dejar de escribir)
+function autoGuardar() {
+    if (timeoutAutoSave) clearTimeout(timeoutAutoSave);
+    timeoutAutoSave = setTimeout(() => {
+        guardarConfiguracion();
+        console.log('💾 Auto-guardado correcto');
+    }, 500);
+}
+
 // ============================================================
-// 4. APLICAR CONFIGURACIÓN A LA PÁGINA
+// 3. RENDERIZAR EVENTOS EN LA PÁGINA PRINCIPAL
+// ============================================================
+function renderizarEventos() {
+    const container = document.getElementById('timelineContainer');
+    if (!container) return;
+    if (!config.eventos || config.eventos.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:var(--vino-claro);">Aún no hay eventos. Agrega algunos desde la configuración ❤️</p>';
+        return;
+    }
+    let html = '';
+    config.eventos.forEach(ev => {
+        html += `
+            <div class="evento">
+                <div class="fecha">${ev.fecha || ''}</div>
+                <div class="titulo-evento">${ev.titulo || ''}</div>
+                <div class="descripcion">${ev.desc || ''}</div>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+// ============================================================
+// 4. APLICAR CONFIGURACIÓN COMPLETA
 // ============================================================
 function aplicarConfiguracion() {
-    // Fecha de inicio (para el contador)
+    // Fecha inicio
     if (config.fechaInicio) {
-        const fechaParts = config.fechaInicio.split('T');
-        const fecha = fechaParts[0].split('-');
-        const hora = fechaParts[1] ? fechaParts[1].split(':') : ['0','0'];
-        FECHA_INICIO = new Date(
-            parseInt(fecha[0]),
-            parseInt(fecha[1]) - 1,
-            parseInt(fecha[2]),
-            parseInt(hora[0]),
-            parseInt(hora[1])
-        );
-        // Actualizar el contador inmediatamente
+        const parts = config.fechaInicio.split('T');
+        const fecha = parts[0].split('-');
+        const hora = parts[1] ? parts[1].split(':') : ['0','0'];
+        FECHA_INICIO = new Date(parseInt(fecha[0]), parseInt(fecha[1])-1, parseInt(fecha[2]), parseInt(hora[0]), parseInt(hora[1]));
         actualizarContador();
     }
-
-    // Título y subtítulo
+    // Títulos
     document.getElementById('tituloPrincipal').textContent = config.titulo || DEFAULT_CONFIG.titulo;
     document.getElementById('subtituloPrincipal').textContent = config.subtitulo || DEFAULT_CONFIG.subtitulo;
-
-    // Foto polaroid
-    if (config.foto) {
-        document.getElementById('fotoPolaroid').src = config.foto;
-    }
-
-    // Canción (se actualiza en el reproductor al recargar)
-    if (config.cancion && audio) {
-        // Si el audio ya existe, cambiamos la fuente
-        audio.src = config.cancion;
-        if (reproduciendo) {
-            audio.play().catch(() => {});
-        }
-    }
-
-    // Colores (variables CSS)
+    // Foto
+    if (config.foto) document.getElementById('fotoPolaroid').src = config.foto;
+    // Canción
+    if (config.cancion && audio) { audio.src = config.cancion; if (reproduciendo) audio.play().catch(()=>{}); }
+    // Colores
     const root = document.documentElement;
     if (config.colorVino) {
         root.style.setProperty('--vino', config.colorVino);
-        // Calcular variantes claras (se puede mejorar)
         root.style.setProperty('--vino-claro', ajustarBrillo(config.colorVino, 30));
     }
     if (config.colorRosa) {
         root.style.setProperty('--rose', config.colorRosa);
         root.style.setProperty('--rose-claro', ajustarBrillo(config.colorRosa, 10));
     }
-
-    // Eventos de la línea de tiempo
-    document.getElementById('ev1Fecha').textContent = config.evento1Fecha || DEFAULT_CONFIG.evento1Fecha;
-    document.getElementById('ev1Titulo').textContent = config.evento1Titulo || DEFAULT_CONFIG.evento1Titulo;
-    document.getElementById('ev1Desc').textContent = config.evento1Desc || DEFAULT_CONFIG.evento1Desc;
-    document.getElementById('ev2Fecha').textContent = config.evento2Fecha || DEFAULT_CONFIG.evento2Fecha;
-    document.getElementById('ev2Titulo').textContent = config.evento2Titulo || DEFAULT_CONFIG.evento2Titulo;
-    document.getElementById('ev2Desc').textContent = config.evento2Desc || DEFAULT_CONFIG.evento2Desc;
-    document.getElementById('ev3Fecha').textContent = config.evento3Fecha || DEFAULT_CONFIG.evento3Fecha;
-    document.getElementById('ev3Titulo').textContent = config.evento3Titulo || DEFAULT_CONFIG.evento3Titulo;
-    document.getElementById('ev3Desc').textContent = config.evento3Desc || DEFAULT_CONFIG.evento3Desc;
-
+    // Eventos
+    renderizarEventos();
     // Acordeón
     document.getElementById('acordeon1Titulo').textContent = config.acordeon1Titulo || DEFAULT_CONFIG.acordeon1Titulo;
     document.querySelector('#acordeon1Contenido p').textContent = config.acordeon1Contenido || DEFAULT_CONFIG.acordeon1Contenido;
@@ -126,14 +123,12 @@ function aplicarConfiguracion() {
     document.querySelector('#acordeon2Contenido p').textContent = config.acordeon2Contenido || DEFAULT_CONFIG.acordeon2Contenido;
     document.getElementById('acordeon3Titulo').textContent = config.acordeon3Titulo || DEFAULT_CONFIG.acordeon3Titulo;
     document.querySelector('#acordeon3Contenido p').textContent = config.acordeon3Contenido || DEFAULT_CONFIG.acordeon3Contenido;
-
     // Gustos
     document.getElementById('gusto1Titulo').textContent = config.gusto1Titulo || DEFAULT_CONFIG.gusto1Titulo;
     document.getElementById('gusto1Desc').textContent = config.gusto1Desc || DEFAULT_CONFIG.gusto1Desc;
     document.getElementById('gusto2Titulo').textContent = config.gusto2Titulo || DEFAULT_CONFIG.gusto2Titulo;
     document.getElementById('gusto2Desc').textContent = config.gusto2Desc || DEFAULT_CONFIG.gusto2Desc;
-
-    // Carta de amor
+    // Carta
     if (config.carta) {
         const parrafos = config.carta.split('\n\n').filter(p => p.trim() !== '');
         const contenedor = document.getElementById('cartaTexto');
@@ -141,281 +136,65 @@ function aplicarConfiguracion() {
     }
 }
 
-// Función auxiliar para ajustar brillo de colores (simple)
-function ajustarBrillo(hex, porcentaje) {
-    // Convierte hex a RGB, suma el porcentaje a cada canal, y vuelve a hex
-    let r = parseInt(hex.slice(1,3), 16);
-    let g = parseInt(hex.slice(3,5), 16);
-    let b = parseInt(hex.slice(5,7), 16);
-    r = Math.min(255, r + porcentaje);
-    g = Math.min(255, g + porcentaje);
-    b = Math.min(255, b + porcentaje);
+function ajustarBrillo(hex, p) {
+    let r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+    r = Math.min(255, r+p); g = Math.min(255, g+p); b = Math.min(255, b+p);
     return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
 }
 
 // ============================================================
-// 5. CONTADOR EN VIVO (modificado para usar FECHA_INICIO dinámica)
+// 5. CONTADOR
 // ============================================================
 let FECHA_INICIO = new Date(2026, 2, 19, 0, 0, 0);
-
 function actualizarContador() {
     const ahora = new Date();
     const diff = ahora - FECHA_INICIO;
-
     if (diff <= 0) {
-        document.getElementById('dias').textContent = '00';
-        document.getElementById('horas').textContent = '00';
-        document.getElementById('minutos').textContent = '00';
-        document.getElementById('segundos').textContent = '00';
+        ['dias','horas','minutos','segundos'].forEach(id => document.getElementById(id).textContent='00');
         return;
     }
-
-    const segundos = Math.floor(diff / 1000);
-    const minutos = Math.floor(segundos / 60);
-    const horas = Math.floor(minutos / 60);
-    const dias = Math.floor(horas / 24);
-
-    document.getElementById('dias').textContent = String(dias).padStart(2, '0');
-    document.getElementById('horas').textContent = String(horas % 24).padStart(2, '0');
-    document.getElementById('minutos').textContent = String(minutos % 60).padStart(2, '0');
-    document.getElementById('segundos').textContent = String(segundos % 60).padStart(2, '0');
+    const s = Math.floor(diff/1000), m = Math.floor(s/60), h = Math.floor(m/60), d = Math.floor(h/24);
+    document.getElementById('dias').textContent = String(d).padStart(2,'0');
+    document.getElementById('horas').textContent = String(h%24).padStart(2,'0');
+    document.getElementById('minutos').textContent = String(m%60).padStart(2,'0');
+    document.getElementById('segundos').textContent = String(s%60).padStart(2,'0');
 }
-
 actualizarContador();
 setInterval(actualizarContador, 1000);
 
 // ============================================================
 // 6. ACORDEÓN
 // ============================================================
-document.querySelectorAll('.acordeon-header').forEach(header => {
-    header.addEventListener('click', function() {
+document.querySelectorAll('.acordeon-header').forEach(h => {
+    h.addEventListener('click', function() {
         const item = this.parentElement;
-        const estaAbierto = item.classList.contains('abierto');
+        const abierto = item.classList.contains('abierto');
         document.querySelectorAll('.acordeon-item').forEach(el => el.classList.remove('abierto'));
-        if (!estaAbierto) item.classList.add('abierto');
+        if (!abierto) item.classList.add('abierto');
     });
 });
 
 // ============================================================
-// 7. REPRODUCTOR DE MÚSICA
+// 7. REPRODUCTOR Y CONFETI (sin cambios, solo copia lo que tenías)
 // ============================================================
-const playBtn = document.getElementById('playBtn');
-const estadoMusica = document.getElementById('estadoMusica');
-let audio = null;
-let reproduciendo = false;
-let URL_CANCION = config.cancion || DEFAULT_CONFIG.cancion;
-
-playBtn.addEventListener('click', function() {
-    if (!audio) {
-        audio = new Audio(URL_CANCION);
-        audio.loop = true;
-        audio.volume = 0.5;
-        audio.addEventListener('ended', () => {
-            if (reproduciendo) {
-                audio.currentTime = 0;
-                audio.play();
-            }
-        });
-    }
-
-    if (reproduciendo) {
-        audio.pause();
-        reproduciendo = false;
-        playBtn.textContent = '▶️';
-        estadoMusica.textContent = '⏸️';
-    } else {
-        audio.play().then(() => {
-            reproduciendo = true;
-            playBtn.textContent = '⏹️';
-            estadoMusica.textContent = '🎵';
-        }).catch(err => {
-            alert('No se pudo reproducir la música. Asegúrate de que el navegador lo permita.');
-            console.warn('Error al reproducir:', err);
-        });
-    }
-});
+// ... (Mantén aquí tu código del reproductor y confeti exactamente igual) ...
 
 // ============================================================
-// 8. CONFETI
-// ============================================================
-const canvas = document.getElementById('confeti-canvas');
-const ctx = canvas.getContext('2d');
-let confetiActivo = false;
-let particulas = [];
-let animacionId = null;
-
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-
-class Particula {
-    constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height - canvas.height;
-        this.size = Math.random() * 12 + 6;
-        this.speedY = Math.random() * 4 + 3;
-        this.speedX = (Math.random() - 0.5) * 3;
-        this.opacity = 1;
-        this.color = `hsl(${Math.random() * 30 + 340}, 80%, 60%)`;
-        this.rotation = 0;
-        this.rotationSpeed = (Math.random() - 0.5) * 0.1;
-        this.forma = Math.random() > 0.5 ? 'corazon' : 'circulo';
-    }
-    dibujar(ctx) {
-        ctx.save();
-        ctx.translate(this.x, this.y);
-        ctx.rotate(this.rotation);
-        ctx.globalAlpha = this.opacity;
-        ctx.fillStyle = this.color;
-        if (this.forma === 'corazon') {
-            ctx.beginPath();
-            const s = this.size / 2;
-            ctx.moveTo(0, -s);
-            ctx.bezierCurveTo(-s * 2, -s * 2, -s * 2, s, 0, s * 1.2);
-            ctx.bezierCurveTo(s * 2, s, s * 2, -s * 2, 0, -s);
-            ctx.fill();
-        } else {
-            ctx.beginPath();
-            ctx.arc(0, 0, this.size / 2, 0, Math.PI * 2);
-            ctx.fill();
-        }
-        ctx.restore();
-    }
-    actualizar() {
-        this.y += this.speedY;
-        this.x += this.speedX;
-        this.rotation += this.rotationSpeed;
-        if (this.y > canvas.height + 20) {
-            this.y = -20;
-            this.x = Math.random() * canvas.width;
-        }
-        if (this.y > canvas.height * 0.9) {
-            this.opacity = 1 - (this.y - canvas.height * 0.9) / (canvas.height * 0.1);
-        } else {
-            this.opacity = 1;
-        }
-    }
-}
-
-function iniciarConfeti() {
-    if (confetiActivo) return;
-    confetiActivo = true;
-    particulas = [];
-    for (let i = 0; i < 180; i++) {
-        particulas.push(new Particula());
-    }
-    if (animacionId) cancelAnimationFrame(animacionId);
-    animarConfeti();
-}
-
-function animarConfeti() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    let activas = false;
-    for (let p of particulas) {
-        p.actualizar();
-        p.dibujar(ctx);
-        if (p.y < canvas.height) activas = true;
-    }
-    if (!activas && particulas.length > 0) {
-        for (let i = 0; i < 20; i++) {
-            particulas[i].y = -20;
-            particulas[i].x = Math.random() * canvas.width;
-        }
-    }
-    animacionId = requestAnimationFrame(animarConfeti);
-}
-
-document.getElementById('btnConfeti').addEventListener('click', function() {
-    iniciarConfeti();
-    const mensaje = document.getElementById('mensajeOculto');
-    mensaje.classList.add('visible');
-    this.textContent = '🎉 ¡Sorpresa! 🎉';
-    setTimeout(() => {
-        this.textContent = '✨ ¡Presiona para una sorpresa! ✨';
-    }, 3000);
-});
-
-canvas.addEventListener('dblclick', function() {
-    if (animacionId) {
-        cancelAnimationFrame(animacionId);
-        animacionId = null;
-        confetiActivo = false;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-});
-
-// ============================================================
-// 9. PANEL DE CONFIGURACIÓN (Modal)
+// 8. PANEL DE CONFIGURACIÓN CON VISTA PREVIA EN VIVO
 // ============================================================
 const configBtn = document.getElementById('configBtn');
 const configModal = document.getElementById('configModal');
 const configClose = document.getElementById('configClose');
-const configForm = document.getElementById('configForm');
 
-// Abrir modal
-configBtn.addEventListener('click', () => {
-    configModal.classList.add('mostrar');
-    // Rellenar los campos con la configuración actual
-    document.getElementById('cfgFechaInicio').value = config.fechaInicio || '';
-    document.getElementById('cfgTitulo').value = config.titulo || '';
-    document.getElementById('cfgSubtitulo').value = config.subtitulo || '';
-    document.getElementById('cfgFoto').value = config.foto || '';
-    document.getElementById('cfgCancion').value = config.cancion || '';
-    document.getElementById('cfgVino').value = config.colorVino || '#7a2e3e';
-    document.getElementById('cfgRosa').value = config.colorRosa || '#f9e0e0';
-    document.getElementById('cfgEvento1Fecha').value = config.evento1Fecha || '';
-    document.getElementById('cfgEvento1Titulo').value = config.evento1Titulo || '';
-    document.getElementById('cfgEvento1Desc').value = config.evento1Desc || '';
-    document.getElementById('cfgEvento2Fecha').value = config.evento2Fecha || '';
-    document.getElementById('cfgEvento2Titulo').value = config.evento2Titulo || '';
-    document.getElementById('cfgEvento2Desc').value = config.evento2Desc || '';
-    document.getElementById('cfgEvento3Fecha').value = config.evento3Fecha || '';
-    document.getElementById('cfgEvento3Titulo').value = config.evento3Titulo || '';
-    document.getElementById('cfgEvento3Desc').value = config.evento3Desc || '';
-    document.getElementById('cfgAcordeon1Titulo').value = config.acordeon1Titulo || '';
-    document.getElementById('cfgAcordeon1Contenido').value = config.acordeon1Contenido || '';
-    document.getElementById('cfgAcordeon2Titulo').value = config.acordeon2Titulo || '';
-    document.getElementById('cfgAcordeon2Contenido').value = config.acordeon2Contenido || '';
-    document.getElementById('cfgAcordeon3Titulo').value = config.acordeon3Titulo || '';
-    document.getElementById('cfgAcordeon3Contenido').value = config.acordeon3Contenido || '';
-    document.getElementById('cfgGusto1Titulo').value = config.gusto1Titulo || '';
-    document.getElementById('cfgGusto1Desc').value = config.gusto1Desc || '';
-    document.getElementById('cfgGusto2Titulo').value = config.gusto2Titulo || '';
-    document.getElementById('cfgGusto2Desc').value = config.gusto2Desc || '';
-    document.getElementById('cfgCarta').value = config.carta || '';
-});
-
-// Cerrar modal
-function cerrarModal() {
-    configModal.classList.remove('mostrar');
-}
-configClose.addEventListener('click', cerrarModal);
-window.addEventListener('click', (e) => {
-    if (e.target === configModal) cerrarModal();
-});
-
-// Guardar configuración
-document.getElementById('configGuardar').addEventListener('click', () => {
-    // Recoger todos los valores
+// --- Función para sincronizar los inputs del modal con el objeto config ---
+function sincronizarInputs() {
+    // Campos básicos
     config.fechaInicio = document.getElementById('cfgFechaInicio').value;
     config.titulo = document.getElementById('cfgTitulo').value;
     config.subtitulo = document.getElementById('cfgSubtitulo').value;
-    config.foto = document.getElementById('cfgFoto').value;
     config.cancion = document.getElementById('cfgCancion').value;
     config.colorVino = document.getElementById('cfgVino').value;
     config.colorRosa = document.getElementById('cfgRosa').value;
-    config.evento1Fecha = document.getElementById('cfgEvento1Fecha').value;
-    config.evento1Titulo = document.getElementById('cfgEvento1Titulo').value;
-    config.evento1Desc = document.getElementById('cfgEvento1Desc').value;
-    config.evento2Fecha = document.getElementById('cfgEvento2Fecha').value;
-    config.evento2Titulo = document.getElementById('cfgEvento2Titulo').value;
-    config.evento2Desc = document.getElementById('cfgEvento2Desc').value;
-    config.evento3Fecha = document.getElementById('cfgEvento3Fecha').value;
-    config.evento3Titulo = document.getElementById('cfgEvento3Titulo').value;
-    config.evento3Desc = document.getElementById('cfgEvento3Desc').value;
     config.acordeon1Titulo = document.getElementById('cfgAcordeon1Titulo').value;
     config.acordeon1Contenido = document.getElementById('cfgAcordeon1Contenido').value;
     config.acordeon2Titulo = document.getElementById('cfgAcordeon2Titulo').value;
@@ -428,42 +207,185 @@ document.getElementById('configGuardar').addEventListener('click', () => {
     config.gusto2Desc = document.getElementById('cfgGusto2Desc').value;
     config.carta = document.getElementById('cfgCarta').value;
 
-    // Guardar en localStorage
-    guardarConfiguracion();
+    // Eventos (recorrer los contenedores)
+    const eventosNodes = document.querySelectorAll('.evento-config');
+    const nuevosEventos = [];
+    eventosNodes.forEach(node => {
+        const fecha = node.querySelector('.ev-fecha').value;
+        const titulo = node.querySelector('.ev-titulo').value;
+        const desc = node.querySelector('.ev-desc').value;
+        nuevosEventos.push({ fecha, titulo, desc });
+    });
+    config.eventos = nuevosEventos;
 
-    // Actualizar la URL de la canción si cambió
-    if (config.cancion && audio) {
-        audio.src = config.cancion;
+    // Aplicar los cambios a la vista principal EN VIVO
+    aplicarConfiguracion();
+    
+    // Auto-guardar en localStorage (con debounce)
+    autoGuardar();
+}
+
+// --- Abrir modal y llenar campos ---
+function abrirModal() {
+    configModal.classList.add('mostrar');
+    // Rellenar campos con los valores actuales
+    document.getElementById('cfgFechaInicio').value = config.fechaInicio || '';
+    document.getElementById('cfgTitulo').value = config.titulo || '';
+    document.getElementById('cfgSubtitulo').value = config.subtitulo || '';
+    document.getElementById('cfgCancion').value = config.cancion || '';
+    document.getElementById('cfgVino').value = config.colorVino || '#7a2e3e';
+    document.getElementById('cfgRosa').value = config.colorRosa || '#f9e0e0';
+    document.getElementById('cfgAcordeon1Titulo').value = config.acordeon1Titulo || '';
+    document.getElementById('cfgAcordeon1Contenido').value = config.acordeon1Contenido || '';
+    document.getElementById('cfgAcordeon2Titulo').value = config.acordeon2Titulo || '';
+    document.getElementById('cfgAcordeon2Contenido').value = config.acordeon2Contenido || '';
+    document.getElementById('cfgAcordeon3Titulo').value = config.acordeon3Titulo || '';
+    document.getElementById('cfgAcordeon3Contenido').value = config.acordeon3Contenido || '';
+    document.getElementById('cfgGusto1Titulo').value = config.gusto1Titulo || '';
+    document.getElementById('cfgGusto1Desc').value = config.gusto1Desc || '';
+    document.getElementById('cfgGusto2Titulo').value = config.gusto2Titulo || '';
+    document.getElementById('cfgGusto2Desc').value = config.gusto2Desc || '';
+    document.getElementById('cfgCarta').value = config.carta || '';
+
+    // Previsualizar foto
+    const preview = document.getElementById('cfgFotoPreview');
+    if (config.foto && config.foto.startsWith('data:image')) {
+        preview.src = config.foto;
+        preview.style.display = 'block';
+    } else {
+        preview.style.display = 'none';
     }
 
-    // Aplicar a la página
-    aplicarConfiguracion();
+    renderizarEventosConfig();
+}
 
-    // Cerrar modal
-    cerrarModal();
+function cerrarModal() {
+    configModal.classList.remove('mostrar');
+}
 
-    // Mostrar feedback
-    alert('✅ ¡Configuración guardada con éxito!');
+configBtn.addEventListener('click', abrirModal);
+configClose.addEventListener('click', cerrarModal);
+window.addEventListener('click', (e) => { if (e.target === configModal) cerrarModal(); });
+
+// --- Eventos de los inputs: ACTUALIZACIÓN EN VIVO ---
+// Agregamos un listener 'input' a TODOS los campos del formulario
+document.querySelectorAll('#configForm input, #configForm textarea').forEach(input => {
+    // Excepto el input file que tiene su propio handler
+    if (input.type !== 'file') {
+        input.addEventListener('input', sincronizarInputs);
+        input.addEventListener('change', sincronizarInputs); // Para colores y fechas
+    }
 });
 
-// Restaurar valores por defecto
-document.getElementById('configRestaurar').addEventListener('click', () => {
-    if (confirm('¿Estás seguro de que quieres restaurar todos los valores por defecto?')) {
+// --- Gestión de eventos en el formulario (con flechas para reordenar) ---
+const eventosContainer = document.getElementById('eventosContainer');
+
+function renderizarEventosConfig() {
+    if (!eventosContainer) return;
+    eventosContainer.innerHTML = '';
+    if (!config.eventos || config.eventos.length === 0) {
+        eventosContainer.innerHTML = '<p style="color:var(--vino-claro);">No hay eventos. Agrega uno con el botón de abajo.</p>';
+        return;
+    }
+    config.eventos.forEach((ev, index) => {
+        const div = document.createElement('div');
+        div.className = 'evento-config';
+        div.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <strong style="color:var(--vino);">#${index + 1}</strong>
+                <div>
+                    ${index > 0 ? `<button type="button" class="mover-evento" data-index="${index}" data-dir="-1" style="background:var(--rose); border:none; border-radius:50%; width:28px; height:28px; cursor:pointer; font-size:1rem;">⬆️</button>` : ''}
+                    ${index < config.eventos.length - 1 ? `<button type="button" class="mover-evento" data-index="${index}" data-dir="1" style="background:var(--rose); border:none; border-radius:50%; width:28px; height:28px; cursor:pointer; font-size:1rem;">⬇️</button>` : ''}
+                    <button type="button" class="eliminar-evento" data-index="${index}" style="background:#ff6b6b; color:white; border:none; border-radius:50%; width:28px; height:28px; cursor:pointer; font-size:1rem;">✕</button>
+                </div>
+            </div>
+            <div class="config-group"><label>Fecha:</label><input type="text" class="ev-fecha" value="${ev.fecha || ''}" placeholder="Ej: 24 de diciembre de 2025" /></div>
+            <div class="config-group"><label>Título:</label><input type="text" class="ev-titulo" value="${ev.titulo || ''}" placeholder="Ej: El inicio de todo" /></div>
+            <div class="config-group"><label>Descripción:</label><input type="text" class="ev-desc" value="${ev.desc || ''}" placeholder="Breve descripción" /></div>
+        `;
+        eventosContainer.appendChild(div);
+    });
+
+    // Asignar eventos a los nuevos inputs para que también activen la vista previa en vivo
+    document.querySelectorAll('.evento-config input').forEach(inp => {
+        inp.addEventListener('input', sincronizarInputs);
+        inp.addEventListener('change', sincronizarInputs);
+    });
+
+    // Eliminar eventos
+    document.querySelectorAll('.eliminar-evento').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const idx = parseInt(this.dataset.index);
+            config.eventos.splice(idx, 1);
+            sincronizarInputs(); // Actualiza todo
+            renderizarEventosConfig(); // Re-renderiza
+        });
+    });
+
+    // Mover eventos (arriba/abajo)
+    document.querySelectorAll('.mover-evento').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const idx = parseInt(this.dataset.index);
+            const dir = parseInt(this.dataset.dir);
+            const newIdx = idx + dir;
+            if (newIdx < 0 || newIdx >= config.eventos.length) return;
+            // Intercambiar
+            const temp = config.eventos[idx];
+            config.eventos[idx] = config.eventos[newIdx];
+            config.eventos[newIdx] = temp;
+            sincronizarInputs();
+            renderizarEventosConfig();
+        });
+    });
+}
+
+// Agregar nuevo evento (más rápido)
+document.getElementById('agregarEventoBtn').addEventListener('click', function() {
+    config.eventos.push({ fecha: '', titulo: '', desc: '' });
+    sincronizarInputs();
+    renderizarEventosConfig();
+    // Hacer scroll al final
+    eventosContainer.scrollTop = eventosContainer.scrollHeight;
+});
+
+// --- Carga de imagen ---
+document.getElementById('cfgFotoFile').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const dataUrl = event.target.result;
+        config.foto = dataUrl;
+        document.getElementById('cfgFotoPreview').src = dataUrl;
+        document.getElementById('cfgFotoPreview').style.display = 'block';
+        document.getElementById('fotoPolaroid').src = dataUrl;
+        autoGuardar();
+    };
+    reader.readAsDataURL(file);
+});
+
+// --- Botón Guardar (ahora es solo para feedback visual, porque ya se guarda solo) ---
+document.getElementById('configGuardar').addEventListener('click', function() {
+    sincronizarInputs();
+    guardarConfiguracion(); // Guardado forzado inmediato
+    cerrarModal();
+    alert('✅ ¡Cambios guardados y aplicados al instante!');
+});
+
+// Restaurar por defecto
+document.getElementById('configRestaurar').addEventListener('click', function() {
+    if (confirm('¿Restaurar todos los valores por defecto?')) {
         config = { ...DEFAULT_CONFIG };
         guardarConfiguracion();
-        // Si hay audio, actualizar URL
         if (audio) audio.src = config.cancion;
         aplicarConfiguracion();
         cerrarModal();
-        alert('↩️ Configuración restaurada a los valores originales.');
+        alert('↩️ Configuración restaurada.');
     }
 });
 
 // ============================================================
-// 10. APLICAR CONFIGURACIÓN AL CARGAR
+// 9. INICIALIZAR
 // ============================================================
 aplicarConfiguracion();
-
-console.log('%c💖 Felices 5 meses, amor. Este sitio es para ti. 💖', 'font-size: 20px; color: #7a2e3e; font-weight: bold;');
-console.log('⚙️ Puedes modificar todos los textos y colores desde el botón de configuración (engranaje) en la esquina inferior izquierda.');
-            
+console.log('%c💖 Modo edición rápida activado: escribe y mira los cambios en vivo', 'font-size:16px; color:#7a2e3e;');
