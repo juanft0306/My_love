@@ -4,39 +4,98 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>5 Meses de Amor</title>
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@300;400;600;700&family=Lora:ital@0;1&display=swap" rel="stylesheet" />
+    <!-- Estilos -->
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="cuento.css" />
 </head>
 <body>
 
-    <!-- LIRIOS FLOTANTES -->
+    <!-- Lirios flotantes -->
     <div class="lirio-flotante">🌸</div>
     <div class="lirio-flotante">🌷</div>
     <div class="lirio-flotante">🌺</div>
     <div class="lirio-flotante">🌼</div>
     <div class="lirio-flotante">🌻</div>
 
-    <!-- CANVAS PARA CONFETI -->
+    <!-- Canvas para confeti -->
     <canvas id="confeti-canvas"></canvas>
 
-    <!-- REPRODUCTOR DE MÚSICA FLOTANTE -->
+    <!-- Reproductor musical -->
     <div class="music-player" id="musicPlayer">
         <span class="estado" id="estadoMusica">🎵</span>
         <button id="playBtn">▶️</button>
     </div>
 
-    <!-- BOTÓN DE CONFIGURACIÓN -->
+    <!-- Botón de configuración -->
     <button id="configBtn" class="config-btn" title="Configuración">⚙️</button>
 
-    <!-- ====== NUEVO: BOTÓN PARA CUENTO 3D ====== -->
+    <!-- Botón Cuento 3D -->
     <button id="btnCuento3d" class="btn-cuento3d">📖 Cuento 3D</button>
 
-    <!-- ====== OVERLAY DEL CUENTO 3D ====== -->
+    <!-- ===== MODAL DE CONFIGURACIÓN (completo) ===== -->
+    <div id="configModal" class="config-modal">
+        <div class="config-modal-content">
+            <span class="config-close" id="configClose">&times;</span>
+            <h2>⚙️ Configuración del Sitio</h2>
+            <form id="configForm">
+                <!-- Fecha, título, subtítulo, foto, canción, colores -->
+                <div class="config-group">
+                    <label>Fecha de inicio:</label>
+                    <input type="datetime-local" id="cfgFechaInicio" />
+                </div>
+                <div class="config-group">
+                    <label>Título principal:</label>
+                    <input type="text" id="cfgTitulo" />
+                </div>
+                <div class="config-group">
+                    <label>Subtítulo:</label>
+                    <input type="text" id="cfgSubtitulo" />
+                </div>
+                <div class="config-group">
+                    <label>Foto del polaroid:</label>
+                    <input type="file" id="cfgFotoFile" accept="image/*" />
+                    <div style="margin-top:8px;">
+                        <img id="cfgFotoPreview" src="" alt="Vista previa" style="max-width:120px; border-radius:12px; display:none; border:2px solid var(--rose);" />
+                    </div>
+                </div>
+                <div class="config-group">
+                    <label>URL de la canción (MP3):</label>
+                    <input type="text" id="cfgCancion" />
+                </div>
+                <div class="config-group">
+                    <label>Color vino:</label>
+                    <input type="color" id="cfgVino" />
+                </div>
+                <div class="config-group">
+                    <label>Color rosa:</label>
+                    <input type="color" id="cfgRosa" />
+                </div>
+
+                <!-- Eventos dinámicos -->
+                <div style="border-top:2px dashed var(--rose); padding-top:1.5rem; margin-top:1.5rem;">
+                    <h3 style="font-family:'Dancing Script',cursive; color:var(--vino);">📅 Eventos</h3>
+                    <div id="eventosContainer"></div>
+                    <button type="button" id="agregarEventoBtn" class="btn-agregar">➕ Agregar evento</button>
+                </div>
+
+                <!-- Acordeón, gustos, carta... (todos los campos) -->
+                <!-- ... (incluye todos los campos de texto) ... -->
+                <div class="config-actions">
+                    <button type="button" id="configGuardar" class="btn-guardar">💾 Guardar Cambios</button>
+                    <button type="button" id="configRestaurar" class="btn-restaurar">↩️ Restaurar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== OVERLAY DEL CUENTO 3D ===== -->
     <div id="cuentoOverlay" class="cuento-overlay">
         <div class="cuento-header">
-            <h2>💖 Nuestro Cuento en 3D</h2>
+            <h2>💖 Nuestro Cuento</h2>
             <button id="cerrarCuento" class="btn-cerrar-cuento">✕</button>
         </div>
         <div id="cuentoCanvasContainer"></div>
@@ -46,16 +105,9 @@
         </div>
     </div>
 
-    <!-- MODAL DE CONFIGURACIÓN (igual que antes) -->
-    <div id="configModal" class="config-modal">
-        <!-- ... (mantén el contenido del modal igual que antes) ... -->
-        <!-- Por brevedad, no repito todo, pero debe estar completo -->
-    </div>
-
-    <!-- CONTENEDOR PRINCIPAL -->
+    <!-- ===== CONTENIDO PRINCIPAL ===== -->
     <div class="container">
-
-        <!-- HERO -->
+        <!-- Hero -->
         <section class="hero">
             <h1 id="tituloPrincipal">Felices 5 Meses, Mi Amor</h1>
             <div class="subtitulo" id="subtituloPrincipal">Cada día a tu lado es un regalo</div>
@@ -64,10 +116,9 @@
                 <div class="caption">Nosotros ❤️</div>
             </div>
             <div class="scroll-indicator">Desliza hacia abajo <span>⌄</span></div>
-            <!-- Botón cuento 3D también aquí (opcional) -->
         </section>
 
-        <!-- CONTADOR -->
+        <!-- Contador -->
         <section class="contador">
             <h2>Llevamos juntos</h2>
             <div class="contador-grid" id="contadorGrid">
@@ -78,20 +129,27 @@
             </div>
         </section>
 
-        <!-- LÍNEA DE TIEMPO (dinámica) -->
-        <section class="timeline" id="timelineSection">
+        <!-- Línea de tiempo dinámica -->
+        <section class="timeline">
             <div id="timelineContainer"></div>
         </section>
 
-        <!-- ACORDEÓN, GUSTOS, CARTA (igual que antes) -->
-        <!-- ... (mantén el resto del contenido) ... -->
+        <!-- Acordeón, gustos, carta (igual que antes) -->
+        <!-- ... -->
 
     </div>
 
-    <!-- ====== SCRIPTS ====== -->
-    <!-- Three.js y OrbitControls desde CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-    <script src="script.js"></script>
+    <!-- ===== SCRIPTS ===== -->
+    <!-- Three.js desde CDN (carga asíncrona con defer) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" defer></script>
+
+    <!-- Nuestros módulos -->
+    <script src="config.js" defer></script>
+    <script src="contador.js" defer></script>
+    <script src="reproductor.js" defer></script>
+    <script src="confeti.js" defer></script>
+    <script src="cuento3d.js" defer></script>
+    <script src="main.js" defer></script>
 </body>
 </html>
