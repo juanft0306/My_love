@@ -28,7 +28,7 @@ const DEFAULT_CONFIG = {
 };
 
 // ============================================================
-// 2. CARGAR Y GUARDAR CONFIGURACIÓN
+// 2. CARGAR Y GUARDAR
 // ============================================================
 function cargarConfiguracion() {
     const guardada = localStorage.getItem('miAmorConfig');
@@ -53,7 +53,6 @@ function guardarConfiguracion() {
     localStorage.setItem('miAmorConfig', JSON.stringify(config));
 }
 
-// Auto-guardado con debounce (cada 500ms después de dejar de escribir)
 function autoGuardar() {
     if (timeoutAutoSave) clearTimeout(timeoutAutoSave);
     timeoutAutoSave = setTimeout(() => {
@@ -175,20 +174,152 @@ document.querySelectorAll('.acordeon-header').forEach(h => {
 });
 
 // ============================================================
-// 7. REPRODUCTOR Y CONFETI (sin cambios, solo copia lo que tenías)
+// 7. REPRODUCTOR DE MÚSICA
 // ============================================================
-// ... (Mantén aquí tu código del reproductor y confeti exactamente igual) ...
+const playBtn = document.getElementById('playBtn');
+const estadoMusica = document.getElementById('estadoMusica');
+let audio = null;
+let reproduciendo = false;
+let URL_CANCION = config.cancion || DEFAULT_CONFIG.cancion;
+
+playBtn.addEventListener('click', function() {
+    if (!audio) {
+        audio = new Audio(URL_CANCION);
+        audio.loop = true;
+        audio.volume = 0.5;
+        audio.addEventListener('ended', () => {
+            if (reproduciendo) {
+                audio.currentTime = 0;
+                audio.play();
+            }
+        });
+    }
+    if (reproduciendo) {
+        audio.pause();
+        reproduciendo = false;
+        playBtn.textContent = '▶️';
+        estadoMusica.textContent = '⏸️';
+    } else {
+        audio.play().then(() => {
+            reproduciendo = true;
+            playBtn.textContent = '⏹️';
+            estadoMusica.textContent = '🎵';
+        }).catch(err => {
+            alert('No se pudo reproducir la música. Asegúrate de que el navegador lo permita.');
+        });
+    }
+});
 
 // ============================================================
-// 8. PANEL DE CONFIGURACIÓN CON VISTA PREVIA EN VIVO
+// 8. CONFETI
+// ============================================================
+const canvas = document.getElementById('confeti-canvas');
+const ctx = canvas.getContext('2d');
+let confetiActivo = false;
+let particulas = [];
+let animacionId = null;
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+class Particula {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height - canvas.height;
+        this.size = Math.random() * 12 + 6;
+        this.speedY = Math.random() * 4 + 3;
+        this.speedX = (Math.random() - 0.5) * 3;
+        this.opacity = 1;
+        this.color = `hsl(${Math.random() * 30 + 340}, 80%, 60%)`;
+        this.rotation = 0;
+        this.rotationSpeed = (Math.random() - 0.5) * 0.1;
+        this.forma = Math.random() > 0.5 ? 'corazon' : 'circulo';
+    }
+    dibujar(ctx) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        ctx.globalAlpha = this.opacity;
+        ctx.fillStyle = this.color;
+        if (this.forma === 'corazon') {
+            ctx.beginPath();
+            const s = this.size / 2;
+            ctx.moveTo(0, -s);
+            ctx.bezierCurveTo(-s * 2, -s * 2, -s * 2, s, 0, s * 1.2);
+            ctx.bezierCurveTo(s * 2, s, s * 2, -s * 2, 0, -s);
+            ctx.fill();
+        } else {
+            ctx.beginPath();
+            ctx.arc(0, 0, this.size / 2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.restore();
+    }
+    actualizar() {
+        this.y += this.speedY;
+        this.x += this.speedX;
+        this.rotation += this.rotationSpeed;
+        if (this.y > canvas.height + 20) {
+            this.y = -20;
+            this.x = Math.random() * canvas.width;
+        }
+        if (this.y > canvas.height * 0.9) {
+            this.opacity = 1 - (this.y - canvas.height * 0.9) / (canvas.height * 0.1);
+        } else {
+            this.opacity = 1;
+        }
+    }
+}
+
+function iniciarConfeti() {
+    if (confetiActivo) return;
+    confetiActivo = true;
+    particulas = [];
+    for (let i = 0; i < 180; i++) {
+        particulas.push(new Particula());
+    }
+    if (animacionId) cancelAnimationFrame(animacionId);
+    animarConfeti();
+}
+
+function animarConfeti() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let p of particulas) {
+        p.actualizar();
+        p.dibujar(ctx);
+    }
+    animacionId = requestAnimationFrame(animarConfeti);
+}
+
+document.getElementById('btnConfeti').addEventListener('click', function() {
+    iniciarConfeti();
+    document.getElementById('mensajeOculto').classList.add('visible');
+    this.textContent = '🎉 ¡Sorpresa! 🎉';
+    setTimeout(() => this.textContent = '✨ ¡Presiona para una sorpresa! ✨', 3000);
+});
+
+canvas.addEventListener('dblclick', function() {
+    if (animacionId) {
+        cancelAnimationFrame(animacionId);
+        animacionId = null;
+        confetiActivo = false;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+});
+
+// ============================================================
+// 9. PANEL DE CONFIGURACIÓN CON VISTA PREVIA EN VIVO
 // ============================================================
 const configBtn = document.getElementById('configBtn');
 const configModal = document.getElementById('configModal');
 const configClose = document.getElementById('configClose');
 
-// --- Función para sincronizar los inputs del modal con el objeto config ---
+// Sincroniza los inputs del modal con el objeto config y aplica los cambios en vivo
 function sincronizarInputs() {
-    // Campos básicos
     config.fechaInicio = document.getElementById('cfgFechaInicio').value;
     config.titulo = document.getElementById('cfgTitulo').value;
     config.subtitulo = document.getElementById('cfgSubtitulo').value;
@@ -207,7 +338,7 @@ function sincronizarInputs() {
     config.gusto2Desc = document.getElementById('cfgGusto2Desc').value;
     config.carta = document.getElementById('cfgCarta').value;
 
-    // Eventos (recorrer los contenedores)
+    // Eventos
     const eventosNodes = document.querySelectorAll('.evento-config');
     const nuevosEventos = [];
     eventosNodes.forEach(node => {
@@ -218,17 +349,12 @@ function sincronizarInputs() {
     });
     config.eventos = nuevosEventos;
 
-    // Aplicar los cambios a la vista principal EN VIVO
     aplicarConfiguracion();
-    
-    // Auto-guardar en localStorage (con debounce)
     autoGuardar();
 }
 
-// --- Abrir modal y llenar campos ---
 function abrirModal() {
     configModal.classList.add('mostrar');
-    // Rellenar campos con los valores actuales
     document.getElementById('cfgFechaInicio').value = config.fechaInicio || '';
     document.getElementById('cfgTitulo').value = config.titulo || '';
     document.getElementById('cfgSubtitulo').value = config.subtitulo || '';
@@ -247,7 +373,6 @@ function abrirModal() {
     document.getElementById('cfgGusto2Desc').value = config.gusto2Desc || '';
     document.getElementById('cfgCarta').value = config.carta || '';
 
-    // Previsualizar foto
     const preview = document.getElementById('cfgFotoPreview');
     if (config.foto && config.foto.startsWith('data:image')) {
         preview.src = config.foto;
@@ -255,7 +380,6 @@ function abrirModal() {
     } else {
         preview.style.display = 'none';
     }
-
     renderizarEventosConfig();
 }
 
@@ -267,17 +391,15 @@ configBtn.addEventListener('click', abrirModal);
 configClose.addEventListener('click', cerrarModal);
 window.addEventListener('click', (e) => { if (e.target === configModal) cerrarModal(); });
 
-// --- Eventos de los inputs: ACTUALIZACIÓN EN VIVO ---
-// Agregamos un listener 'input' a TODOS los campos del formulario
+// Listeners en vivo para todos los inputs (excepto file)
 document.querySelectorAll('#configForm input, #configForm textarea').forEach(input => {
-    // Excepto el input file que tiene su propio handler
     if (input.type !== 'file') {
         input.addEventListener('input', sincronizarInputs);
-        input.addEventListener('change', sincronizarInputs); // Para colores y fechas
+        input.addEventListener('change', sincronizarInputs);
     }
 });
 
-// --- Gestión de eventos en el formulario (con flechas para reordenar) ---
+// --- Gestión de eventos en el formulario ---
 const eventosContainer = document.getElementById('eventosContainer');
 
 function renderizarEventosConfig() {
@@ -306,30 +428,26 @@ function renderizarEventosConfig() {
         eventosContainer.appendChild(div);
     });
 
-    // Asignar eventos a los nuevos inputs para que también activen la vista previa en vivo
     document.querySelectorAll('.evento-config input').forEach(inp => {
         inp.addEventListener('input', sincronizarInputs);
         inp.addEventListener('change', sincronizarInputs);
     });
 
-    // Eliminar eventos
     document.querySelectorAll('.eliminar-evento').forEach(btn => {
         btn.addEventListener('click', function() {
             const idx = parseInt(this.dataset.index);
             config.eventos.splice(idx, 1);
-            sincronizarInputs(); // Actualiza todo
-            renderizarEventosConfig(); // Re-renderiza
+            sincronizarInputs();
+            renderizarEventosConfig();
         });
     });
 
-    // Mover eventos (arriba/abajo)
     document.querySelectorAll('.mover-evento').forEach(btn => {
         btn.addEventListener('click', function() {
             const idx = parseInt(this.dataset.index);
             const dir = parseInt(this.dataset.dir);
             const newIdx = idx + dir;
             if (newIdx < 0 || newIdx >= config.eventos.length) return;
-            // Intercambiar
             const temp = config.eventos[idx];
             config.eventos[idx] = config.eventos[newIdx];
             config.eventos[newIdx] = temp;
@@ -339,16 +457,14 @@ function renderizarEventosConfig() {
     });
 }
 
-// Agregar nuevo evento (más rápido)
 document.getElementById('agregarEventoBtn').addEventListener('click', function() {
     config.eventos.push({ fecha: '', titulo: '', desc: '' });
     sincronizarInputs();
     renderizarEventosConfig();
-    // Hacer scroll al final
     eventosContainer.scrollTop = eventosContainer.scrollHeight;
 });
 
-// --- Carga de imagen ---
+// Carga de imagen
 document.getElementById('cfgFotoFile').addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -364,15 +480,15 @@ document.getElementById('cfgFotoFile').addEventListener('change', function(e) {
     reader.readAsDataURL(file);
 });
 
-// --- Botón Guardar (ahora es solo para feedback visual, porque ya se guarda solo) ---
+// Botón Guardar (ahora solo feedback)
 document.getElementById('configGuardar').addEventListener('click', function() {
     sincronizarInputs();
-    guardarConfiguracion(); // Guardado forzado inmediato
+    guardarConfiguracion();
     cerrarModal();
     alert('✅ ¡Cambios guardados y aplicados al instante!');
 });
 
-// Restaurar por defecto
+// Restaurar
 document.getElementById('configRestaurar').addEventListener('click', function() {
     if (confirm('¿Restaurar todos los valores por defecto?')) {
         config = { ...DEFAULT_CONFIG };
@@ -385,7 +501,7 @@ document.getElementById('configRestaurar').addEventListener('click', function() 
 });
 
 // ============================================================
-// 9. INICIALIZAR
+// 10. INICIALIZAR
 // ============================================================
 aplicarConfiguracion();
 console.log('%c💖 Modo edición rápida activado: escribe y mira los cambios en vivo', 'font-size:16px; color:#7a2e3e;');
