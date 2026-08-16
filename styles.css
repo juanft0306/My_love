@@ -654,3 +654,135 @@ input[type="file"]::-webkit-file-upload-button:hover {
     .config-btn { width: 44px; height: 44px; font-size: 1.5rem; bottom: 1rem; left: 1rem; }
     .config-modal-content { padding: 1.5rem; }
     }
+/* ===== CUENTO 3D ===== */
+.btn-cuento3d {
+    position: fixed;
+    bottom: 6rem;
+    left: 2rem;
+    z-index: 1001;
+    background: var(--vino);
+    color: white;
+    border: none;
+    border-radius: 40px;
+    padding: 0.8rem 1.8rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(122, 46, 62, 0.4);
+    transition: transform 0.3s, background 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+.btn-cuento3d:hover {
+    transform: scale(1.05);
+    background: var(--vino-claro);
+}
+
+.cuento-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2000;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    flex-direction: column;
+    color: white;
+}
+.cuento-overlay.abierto {
+    display: flex;
+}
+.cuento-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: rgba(0,0,0,0.3);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.cuento-header h2 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.8rem;
+    color: #ffb6c1;
+    margin: 0;
+}
+.btn-cerrar-cuento {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+.btn-cerrar-cuento:hover {
+    transform: rotate(90deg);
+}
+
+#cuentoCanvasContainer {
+    flex: 1;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+#cuentoCanvasContainer canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.cuento-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: rgba(0,0,0,0.3);
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+.btn-siguiente {
+    background: #ff6b81;
+    color: white;
+    border: none;
+    padding: 0.7rem 2rem;
+    border-radius: 40px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+.btn-siguiente:hover {
+    background: #e85a70;
+    transform: scale(1.03);
+}
+.btn-siguiente:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.indicador-pagina {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.7);
+    font-weight: 300;
+}
+
+@media (max-width: 600px) {
+    .btn-cuento3d {
+        bottom: 5.5rem;
+        left: 1rem;
+        padding: 0.5rem 1.2rem;
+        font-size: 1rem;
+    }
+    .cuento-header h2 {
+        font-size: 1.4rem;
+    }
+    .cuento-controls {
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0.8rem;
+    }
+    .btn-siguiente {
+        width: 100%;
+        justify-content: center;
+    }
+}
