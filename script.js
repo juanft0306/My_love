@@ -505,3 +505,302 @@ document.getElementById('configRestaurar').addEventListener('click', function() 
 // ============================================================
 aplicarConfiguracion();
 console.log('%c💖 Modo edición rápida activado: escribe y mira los cambios en vivo', 'font-size:16px; color:#7a2e3e;');
+
+// ============================================================
+// 11. CUENTO 3D INTERACTIVO (Three.js)
+// ============================================================
+let escena3D = null;
+let camara3D = null;
+let renderer3D = null;
+let controls3D = null;
+let grupoTextos = null;
+let spritesTextos = [];
+let indiceTextoActual = 0;
+const textosCuento = [
+    "Desde el primer momento supe que eras especial",
+    "Cada día a tu lado es un nuevo capítulo",
+    "Tu sonrisa ilumina mi mundo",
+    "Juntos escribimos nuestra historia",
+    "Te amo más allá de las palabras"
+];
+let animacionId = null;
+let particulas = [];
+
+const btnCuento3d = document.getElementById('btnCuento3d');
+const overlayCuento = document.getElementById('cuentoOverlay');
+const cerrarCuento = document.getElementById('cerrarCuento');
+const btnSiguiente = document.getElementById('btnSiguiente');
+const indicadorPagina = document.getElementById('indicadorPagina');
+
+// Función para crear un sprite de texto
+function crearTextoSprite(texto, color = '#ffb6c1', size = 64) {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = 1024;
+    canvas.height = 256;
+    // Fondo transparente
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Sombra para legibilidad
+    ctx.shadowColor = 'rgba(0,0,0,0.8)';
+    ctx.shadowBlur = 20;
+    ctx.font = `bold ${size}px 'Dancing Script', cursive`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = color;
+    ctx.shadowColor = 'rgba(0,0,0,0.9)';
+    ctx.shadowBlur = 30;
+    ctx.fillText(texto, canvas.width/2, canvas.height/2);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.needsUpdate = true;
+    const material = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false, depthWrite: false });
+    const sprite = new THREE.Sprite(material);
+    sprite.scale.set(8, 2, 1);
+    return sprite;
+}
+
+function iniciarCuento3D() {
+    if (escena3D) return; // ya está iniciado
+
+    // Configurar overlay
+    overlayCuento.classList.add('abierto');
+    const container = document.getElementById('cuentoCanvasContainer');
+
+    // Escena
+    escena3D = new THREE.Scene();
+    escena3D.background = new THREE.Color(0x0a0a1a);
+
+    // Cámara
+    const aspect = container.clientWidth / container.clientHeight;
+    camara3D = new THREE.PerspectiveCamera(60, aspect, 0.1, 1000);
+    camara3D.position.set(0, 2, 12);
+    camara3D.lookAt(0, 0, 0);
+
+    // Renderer
+    renderer3D = new THREE.WebGLRenderer({ antialias: true });
+    renderer3D.setSize(container.clientWidth, container.clientHeight);
+    renderer3D.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer3D.domElement);
+
+    // Controles
+    controls3D = new THREE.OrbitControls(camara3D, renderer3D.domElement);
+    controls3D.enableDamping = true;
+    controls3D.dampingFactor = 0.05;
+    controls3D.autoRotate = true;
+    controls3D.autoRotateSpeed = 0.8;
+    controls3D.enableZoom = true;
+    controls3D.target.set(0, 0, 0);
+    controls3D.update();
+
+    // Luces
+    const ambientLight = new THREE.AmbientLight(0x404060);
+    escena3D.add(ambientLight);
+    const dirLight = new THREE.DirectionalLight(0xffdddd, 1);
+    dirLight.position.set(1, 2, 1);
+    escena3D.add(dirLight);
+    const backLight = new THREE.PointLight(0xff6b81, 0.5);
+    backLight.position.set(-2, 1, -3);
+    escena3D.add(backLight);
+
+    // Partículas de fondo (estrellas)
+    const estrellasGeo = new THREE.BufferGeometry();
+    const count = 2000;
+    const positions = new Float32Array(count * 3);
+    for (let i = 0; i < count * 3; i++) {
+        positions[i] = (Math.random() - 0.5) * 200;
+    }
+    estrellasGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const estrellasMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.15, transparent: true, opacity: 0.8 });
+    const estrellas = new THREE.Points(estrellasGeo, estrellasMat);
+    escena3D.add(estrellas);
+
+    // Grupo que contendrá los textos
+    grupoTextos = new THREE.Group();
+    escena3D.add(grupoTextos);
+
+    // Crear sprites para cada texto, pero inicialmente ocultos
+    spritesTextos = [];
+    textosCuento.forEach((texto, i) => {
+        const sprite = crearTextoSprite(texto, '#ffb6c1', 56);
+        sprite.position.set(0, 0.5 - i * 1.2, 0); // apilados verticalmente
+        sprite.scale.set(8, 2, 1);
+        sprite.visible = false;
+        grupoTextos.add(sprite);
+        spritesTextos.push(sprite);
+    });
+
+    // Añadir algunos corazones 3D flotantes alrededor
+    const corazonGroup = new THREE.Group();
+    const corazonGeo = new THREE.Shape();
+    const x = 0, y = 0;
+    corazonGeo.moveTo(x, y + 0.5);
+    corazonGeo.bezierCurveTo(x - 0.5, y + 1, x - 1, y + 0.5, x - 0.5, y);
+    corazonGeo.bezierCurveTo(x - 1, y - 0.5, x - 0.5, y - 1, x, y - 0.5);
+    corazonGeo.bezierCurveTo(x + 0.5, y - 1, x + 1, y - 0.5, x + 0.5, y);
+    corazonGeo.bezierCurveTo(x + 1, y + 0.5, x + 0.5, y + 1, x, y + 0.5);
+    const corazonMat = new THREE.MeshBasicMaterial({ color: 0xff6b81, side: THREE.DoubleSide });
+    for (let i = 0; i < 30; i++) {
+        const mesh = new THREE.Mesh(corazonGeo, corazonMat);
+        const radius = 3 + Math.random() * 4;
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.random() * Math.PI * 2;
+        mesh.position.set(
+            Math.sin(theta) * Math.cos(phi) * radius,
+            Math.sin(theta) * Math.sin(phi) * radius * 0.5,
+            Math.cos(theta) * radius
+        );
+        mesh.scale.set(0.2 + Math.random() * 0.3, 0.2 + Math.random() * 0.3, 0.2 + Math.random() * 0.3);
+        mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+        corazonGroup.add(mesh);
+    }
+    escena3D.add(corazonGroup);
+
+    // También algunas partículas de luz (estrellas de colores)
+    const colores = [0xff6b81, 0xffb6c1, 0xffa07a, 0xffd700];
+    const particulasGeo = new THREE.BufferGeometry();
+    const posiciones = new Float32Array(500 * 3);
+    const coloresArr = new Float32Array(500 * 3);
+    for (let i = 0; i < 500; i++) {
+        posiciones[i*3] = (Math.random() - 0.5) * 30;
+        posiciones[i*3+1] = (Math.random() - 0.5) * 20;
+        posiciones[i*3+2] = (Math.random() - 0.5) * 30;
+        const c = colores[Math.floor(Math.random() * colores.length)];
+        const color = new THREE.Color(c);
+        coloresArr[i*3] = color.r;
+        coloresArr[i*3+1] = color.g;
+        coloresArr[i*3+2] = color.b;
+    }
+    particulasGeo.setAttribute('position', new THREE.BufferAttribute(posiciones, 3));
+    particulasGeo.setAttribute('color', new THREE.BufferAttribute(coloresArr, 3));
+    const particulasMat = new THREE.PointsMaterial({ size: 0.2, vertexColors: true, transparent: true, opacity: 0.7 });
+    const particulasMesh = new THREE.Points(particulasGeo, particulasMat);
+    escena3D.add(particulasMesh);
+
+    // Guardar referencia para animar
+    particulas = [corazonGroup, estrellas, particulasMesh];
+
+    // Mostrar el primer texto
+    indiceTextoActual = 0;
+    mostrarTexto(indiceTextoActual);
+
+    // Actualizar indicador
+    actualizarIndicador();
+
+    // Iniciar animación
+    animar();
+
+    // Evento resize
+    window.addEventListener('resize', onResizeCuento);
+}
+
+function mostrarTexto(index) {
+    spritesTextos.forEach((sprite, i) => {
+        sprite.visible = (i === index);
+        if (i === index) {
+            // Animación de entrada (escala)
+            sprite.scale.set(0.1, 0.1, 0.1);
+            // Animación la haremos en el bucle
+        }
+    });
+}
+
+function actualizarIndicador() {
+    indicadorPagina.textContent = `${indiceTextoActual + 1} / ${textosCuento.length}`;
+    if (indiceTextoActual >= textosCuento.length - 1) {
+        btnSiguiente.disabled = true;
+        btnSiguiente.textContent = '✨ Fin del cuento ✨';
+    } else {
+        btnSiguiente.disabled = false;
+        btnSiguiente.textContent = 'Siguiente capítulo ➜';
+    }
+}
+
+function onResizeCuento() {
+    const container = document.getElementById('cuentoCanvasContainer');
+    if (!container) return;
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    if (renderer3D && camara3D) {
+        renderer3D.setSize(width, height);
+        camara3D.aspect = width / height;
+        camara3D.updateProjectionMatrix();
+    }
+}
+
+function animar() {
+    animacionId = requestAnimationFrame(animar);
+
+    // Auto-rotar
+    if (controls3D) {
+        controls3D.update();
+    }
+
+    // Animar sprites de texto (escala suave)
+    spritesTextos.forEach((sprite, i) => {
+        if (sprite.visible) {
+            const targetScale = 1;
+            const current = sprite.scale.x;
+            const newScale = current + (targetScale - current) * 0.05;
+            sprite.scale.set(newScale, newScale * 0.25, 1);
+        }
+    });
+
+    // Rotar corazones lentamente
+    if (particulas.length > 0) {
+        particulas[0].rotation.y += 0.002;
+        particulas[0].rotation.x += 0.001;
+    }
+
+    renderer3D.render(escena3D, camara3D);
+}
+
+function cerrarCuento3D() {
+    overlayCuento.classList.remove('abierto');
+    if (animacionId) {
+        cancelAnimationFrame(animacionId);
+        animacionId = null;
+    }
+    if (renderer3D) {
+        const container = document.getElementById('cuentoCanvasContainer');
+        if (container && renderer3D.domElement) {
+            container.removeChild(renderer3D.domElement);
+        }
+        renderer3D.dispose();
+        renderer3D = null;
+    }
+    // Limpiar referencias
+    escena3D = null;
+    camara3D = null;
+    controls3D = null;
+    grupoTextos = null;
+    spritesTextos = [];
+    particulas = [];
+    window.removeEventListener('resize', onResizeCuento);
+}
+
+// Eventos del cuento
+btnCuento3d.addEventListener('click', iniciarCuento3D);
+cerrarCuento.addEventListener('click', cerrarCuento3D);
+
+btnSiguiente.addEventListener('click', function() {
+    if (indiceTextoActual < textosCuento.length - 1) {
+        indiceTextoActual++;
+        mostrarTexto(indiceTextoActual);
+        actualizarIndicador();
+        // Pequeña animación de rotación de cámara (opcional)
+        if (controls3D) {
+            controls3D.autoRotate = false;
+            controls3D.target.set(0, 0, 0);
+            // Podríamos mover la cámara ligeramente
+        }
+    }
+});
+
+// También cerrar con escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && overlayCuento.classList.contains('abierto')) {
+        cerrarCuento3D();
+    }
+});
+
+// Nota: Si el usuario hace clic en el overlay (fuera del canvas) no cerramos para evitar cierres accidentales
