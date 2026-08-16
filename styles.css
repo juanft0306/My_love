@@ -13,7 +13,7 @@ body {
     scroll-behavior: smooth;
 }
 
-/* ---------- PALETA DE COLORES ---------- */
+/* ---------- PALETA DE COLORES (se sobrescribirá con JS) ---------- */
 :root {
     --rose: #f9e0e0;
     --rose-claro: #fce9e9;
@@ -432,6 +432,153 @@ body {
     z-index: 9999;
 }
 
+/* ---------- BOTÓN DE CONFIGURACIÓN ---------- */
+.config-btn {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    z-index: 1001;
+    background: var(--vino);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 1.8rem;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(122, 46, 62, 0.4);
+    transition: transform 0.3s, background 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.config-btn:hover {
+    transform: scale(1.1) rotate(60deg);
+    background: var(--vino-claro);
+}
+
+/* ---------- MODAL DE CONFIGURACIÓN ---------- */
+.config-modal {
+    display: none;
+    position: fixed;
+    z-index: 1002;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.3s;
+}
+.config-modal.mostrar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.config-modal-content {
+    background: #fdf6f0;
+    margin: 20px auto;
+    padding: 2rem 2.5rem;
+    border-radius: 40px;
+    max-width: 700px;
+    width: 95%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    position: relative;
+    border: 2px solid white;
+}
+.config-modal-content h2 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 2.4rem;
+    color: var(--vino);
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.config-close {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--vino);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.config-close:hover {
+    transform: scale(1.2);
+}
+
+.config-group {
+    margin-bottom: 1.2rem;
+    display: flex;
+    flex-direction: column;
+}
+.config-group label {
+    font-weight: 600;
+    color: var(--vino);
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+}
+.config-group input,
+.config-group textarea {
+    padding: 10px 14px;
+    border: 2px solid var(--rose);
+    border-radius: 16px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 0.95rem;
+    background: white;
+    transition: border 0.3s;
+}
+.config-group input:focus,
+.config-group textarea:focus {
+    outline: none;
+    border-color: var(--vino-claro);
+}
+.config-group input[type="color"] {
+    padding: 4px;
+    height: 50px;
+    cursor: pointer;
+}
+
+.config-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+.config-actions button {
+    padding: 0.8rem 2rem;
+    border: none;
+    border-radius: 40px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.config-actions button:hover {
+    transform: scale(1.03);
+}
+.btn-guardar {
+    background: var(--vino);
+    color: white;
+    box-shadow: 0 4px 16px rgba(122, 46, 62, 0.3);
+}
+.btn-restaurar {
+    background: var(--rose);
+    color: var(--vino);
+    box-shadow: 0 4px 16px rgba(122, 46, 62, 0.15);
+}
+
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 600px) {
     .hero h1 { font-size: 2.6rem; }
@@ -443,4 +590,6 @@ body {
     .gusto-card { flex: 1 1 140px; }
     .music-player { bottom: 1rem; right: 1rem; padding: 0.4rem 0.8rem; }
     .music-player button { width: 34px; height: 34px; font-size: 1.2rem; }
-  }
+    .config-btn { width: 44px; height: 44px; font-size: 1.5rem; bottom: 1rem; left: 1rem; }
+    .config-modal-content { padding: 1.5rem; }
+    }
