@@ -3,790 +3,144 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>5 Meses de Noviazgo 💕</title>
-    <!-- Meta tags para compartir -->
-    <meta property="og:title" content="Felices 5 Meses, Mi Amor" />
-    <meta property="og:description" content="Cada día a tu lado es un sueño. Te amo." />
-    <meta property="og:image" content="https://tu-dominio.com/foto-preview.jpg" />
-    <meta property="og:url" content="https://my-love-x97k.onrender.com" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <!-- Aquí irán los estilos (Parte 2) -->
+    <title>5 Meses de Amor</title>
+    <!-- Google Fonts elegantes -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
-    <style>
-        /* ===== ESTILOS (ver Parte 2) ===== */
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@300;400;600;700&family=Lora:ital@0;1&display=swap" rel="stylesheet" />
+    <!-- Enlace al CSS externo -->
+    <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-    <!-- Corazones flotando (fondo) -->
-    <div class="floating-hearts" id="floatingHearts"></div>
+    <!-- LIRIOS FLOTANTES (decorativos) -->
+    <div class="lirio-flotante">🌸</div>
+    <div class="lirio-flotante">🌷</div>
+    <div class="lirio-flotante">🌺</div>
+    <div class="lirio-flotante">🌼</div>
+    <div class="lirio-flotante">🌻</div>
 
-    <!-- Contenedor principal -->
+    <!-- CANVAS PARA CONFETI -->
+    <canvas id="confeti-canvas"></canvas>
+
+    <!-- REPRODUCTOR DE MÚSICA FLOTANTE -->
+    <div class="music-player" id="musicPlayer">
+        <span class="estado" id="estadoMusica">🎵</span>
+        <button id="playBtn">▶️</button>
+    </div>
+
+    <!-- CONTENEDOR PRINCIPAL -->
     <div class="container">
 
-        <!-- ===== HERO ===== -->
-        <header class="hero">
-            <h1>Felices <span>5 Meses</span>, Mi Amor</h1>
-            <div class="subtitle">✦ cada día a tu lado es un sueño ✦</div>
-            <div class="photo-wrapper">
-                <!-- 🔥 CAMBIA ESTA URL por la de tu foto real -->
-                <img src="https://via.placeholder.com/200/FFD1DC/7a1f3d?text=Tu+Foto" alt="Nosotros dos" />
-            </div>
-        </header>
+        <!-- HERO -->
+        <section class="hero">
+            <h1>Felices 5 Meses, Mi Amor</h1>
+            <div class="subtitulo">Cada día a tu lado es un regalo</div>
 
-        <!-- ===== CONTADOR ===== -->
-        <section class="counter-section">
-            <h2>⏳ Hemos compartido juntos...</h2>
-            <div class="counter-grid" id="counter">
-                <div class="counter-item">
-                    <span class="number" id="days">00</span>
-                    <span class="label">Días</span>
-                </div>
-                <div class="counter-item">
-                    <span class="number" id="hours">00</span>
-                    <span class="label">Horas</span>
-                </div>
-                <div class="counter-item">
-                    <span class="number" id="minutes">00</span>
-                    <span class="label">Minutos</span>
-                </div>
-                <div class="counter-item">
-                    <span class="number" id="seconds">00</span>
-                    <span class="label">Segundos</span>
-                </div>
+            <!-- Marco Polaroid (cambiar src por tu foto) -->
+            <div class="polaroid">
+                <img src="https://via.placeholder.com/400x400/f9e0e0/7a2e3e?text=Tu+Foto+Aqui" alt="Nuestra foto" />
+                <div class="caption">Nosotros ❤️</div>
             </div>
-            <p style="font-size:0.85rem; color:#b58a9a; margin-top:0.8rem; letter-spacing:0.5px;">
-                desde el <strong>19 de marzo de 2026</strong>
-            </p>
-        </section>
 
-        <!-- ===== TIMELINE ===== -->
-        <section class="timeline-section">
-            <h2>🌿 Nuestra historia</h2>
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="date">🎄 24 de diciembre de 2025</div>
-                    <div class="title">La primera vez que me hablaste</div>
-                    <div class="detail">Esa noche mágica, tu mensaje iluminó mi corazón como un faro.</div>
-                </div>
-                <div class="timeline-item">
-                    <div class="date">✨ 20 de enero de 2026</div>
-                    <div class="title">Primer encuentro en persona</div>
-                    <div class="detail">Me regalaste un <i>suéter azul</i> que aún guardo conmigo, y desde entonces supe que eras especial.</div>
-                </div>
-                <div class="timeline-item">
-                    <div class="date">🍕 19 de marzo de 2026</div>
-                    <div class="title">El día que te pedí que fueras mi novia</div>
-                    <div class="detail">Después de compartir una pizza, te tomé de la mano y te pregunté si querías hacer este viaje conmigo. Dijiste que sí.</div>
-                </div>
+            <div class="scroll-indicator">
+                Desliza hacia abajo
+                <span>⌄</span>
             </div>
         </section>
 
-        <!-- ===== GUSTOS ===== -->
-        <section class="likes-section">
-            <h2>💖 Cositas que te encantan</h2>
-            <div class="likes-grid">
-                <div class="like-card">
-                    <span class="icon">🌶️</span>
-                    <div class="name">Cheetos Flamin' Hot</div>
-                    <div class="desc">Tu snack favorito, ¡siempre te veo feliz con ellos!</div>
-                    <span class="highlight">🔥 ¡pican rico!</span>
+        <!-- CONTADOR DE TIEMPO -->
+        <section class="contador">
+            <h2>Llevamos juntos</h2>
+            <div class="contador-grid" id="contadorGrid">
+                <div class="tarjeta-tiempo"><span class="numero" id="dias">00</span><span class="etiqueta">Días</span></div>
+                <div class="tarjeta-tiempo"><span class="numero" id="horas">00</span><span class="etiqueta">Horas</span></div>
+                <div class="tarjeta-tiempo"><span class="numero" id="minutos">00</span><span class="etiqueta">Minutos</span></div>
+                <div class="tarjeta-tiempo"><span class="numero" id="segundos">00</span><span class="etiqueta">Segundos</span></div>
+            </div>
+        </section>
+
+        <!-- LÍNEA DE TIEMPO -->
+        <section class="timeline">
+            <div class="evento">
+                <div class="fecha">24 de diciembre de 2025</div>
+                <div class="titulo-evento">El inicio de todo</div>
+                <div class="descripcion">La primera vez que ella me habló. El mejor regalo de Navidad.</div>
+            </div>
+            <div class="evento">
+                <div class="fecha">20 de enero de 2026</div>
+                <div class="titulo-evento">Nuestra primera cita en persona</div>
+                <div class="descripcion">Con ese suéter azul que me regaló y que aún guardo con cariño.</div>
+            </div>
+            <div class="evento">
+                <div class="fecha">19 de marzo de 2026</div>
+                <div class="titulo-evento">El día que le pedí que fuera mi novia</div>
+                <div class="descripcion">Después de invitarla a comer pizza, supo que sería para siempre.</div>
+            </div>
+        </section>
+
+        <!-- COSAS QUE AMO (ACORDEÓN) -->
+        <section class="cosas-amo">
+            <h2>Cosas que amo de ti</h2>
+            <div class="acordeon-item">
+                <div class="acordeon-header">
+                    <span>❤️ Tu sonrisa ilumina mi mundo</span>
+                    <span class="icono">➕</span>
                 </div>
-                <div class="like-card">
-                    <span class="icon">🌸</span>
-                    <div class="name">Lirios</div>
-                    <div class="desc">Tu flor favorita, tan elegante y bella como tú.</div>
-                    <span class="highlight">🤍 pureza y amor</span>
+                <div class="acordeon-contenido">
+                    <p>Cuando sonríes, hasta el día más gris se vuelve soleado. Es mi razón para sonreír siempre.</p>
                 </div>
-                <div class="like-card" style="background: #fef6f9;">
-                    <span class="icon">💕</span>
-                    <div class="name">Detalles tiernos</div>
-                    <div class="desc">Sabes que me derrito por tus abrazos y sonrisas.</div>
-                    <span class="highlight">✨ eres única</span>
+            </div>
+            <div class="acordeon-item">
+                <div class="acordeon-header">
+                    <span>💕 Tu forma de verme</span>
+                    <span class="icono">➕</span>
+                </div>
+                <div class="acordeon-contenido">
+                    <p>Esa mirada tuya que dice más que mil palabras. Me hace sentir el hombre más afortunado.</p>
+                </div>
+            </div>
+            <div class="acordeon-item">
+                <div class="acordeon-header">
+                    <span>✨ Tu carácter y tu pasión</span>
+                    <span class="icono">➕</span>
+                </div>
+                <div class="acordeon-contenido">
+                    <p>Eres fuerte, decidida y sueñas en grande. Admiro cada parte de ti, incluso cuando te enojas.</p>
                 </div>
             </div>
         </section>
 
-        <!-- ===== CARTA DESPLEGABLE ===== -->
-        <section class="letter-section">
-            <h2>💌 Carta de amor</h2>
-            <button class="btn-carta" id="btnCarta">📩 Abrir carta</button>
-            <div class="letter-content" id="letterContent">
-                <p>
-                    Mi hermosa,<br /><br />
-                    Han pasado 5 meses desde que empezó esta historia tan bonita. Cada día a tu lado es un regalo,
-                    cada sonrisa tuya ilumina mi mundo. Eres mi persona favorita, mi refugio y mi mayor alegría.
-                    <br /><br />
-                    Te amo con todo mi ser, y espero que sigamos escribiendo juntos muchos capítulos más.
-                    <span class="signature">— Tu chico, con todo el amor del mundo.</span>
-                </p>
+        <!-- GUSTOS ESPECIALES: Cheetos y Lirios -->
+        <section class="gustos">
+            <div class="gusto-card">
+                <span class="emoji-gusto">🔥</span>
+                <h3>Cheetos Flamin' Hot</h3>
+                <p>¡No hay día que no disfrutes unos buenos Cheetos! Ese toque picante te encanta, y a mí me encanta verte feliz cuando los comes.</p>
             </div>
-
-            <button class="btn-sorpresa" id="btnSorpresa">🎁 Presiona para una sorpresa</button>
-            <div class="secret-message" id="secretMessage">
-                <span class="heart">💖</span>
-                ¡Eres el amor de mi vida!  <br />
-                Cada momento contigo es un sueño hecho realidad.  <br />
-                <span style="font-size:1.8rem; display:inline-block; margin-top:0.3rem;">🌷✨</span>
-                <br />
-                <span style="font-size:0.9rem; font-weight:300; color:#7a4b5a;">
-                    (y sí, los Cheetos Flamin' Hot son los mejores acompañantes de nuestras pelis)
-                </span>
+            <div class="gusto-card">
+                <span class="emoji-gusto">🌸</span>
+                <h3>Lirios</h3>
+                <p>Tus flores favoritas, tan elegantes y dulces como tú. Siempre que veo uno pienso en ti.</p>
             </div>
         </section>
 
-        <!-- ===== COMPARTIR ===== -->
-        <div class="share-section">
-            <button class="btn-share" id="btnShare">🔗 Compartir este momento</button>
-        </div>
-
-        <footer style="text-align:center; margin-top:2.5rem; font-size:0.8rem; color:#c4a3b0; letter-spacing:1px; position:relative; z-index:1;">
-            🌸 hecho con mucho amor para ti 🌸
-            <br />
-            <span style="font-size:0.7rem;">19·03·2026 — 19·08·2026</span>
-        </footer>
+        <!-- CARTA DE AMOR Y BOTÓN DE CONFETI -->
+        <section class="carta-final">
+            <h2>Para ti, mi amor</h2>
+            <div class="carta-texto">
+                <p>Han pasado 5 meses desde que decidimos emprender este viaje juntos, y cada día confirmo que fuiste la mejor elección de mi vida.</p>
+                <p>Eres mi refugio, mi alegría y mi mayor inspiración. Gracias por cada sonrisa, cada abrazo y por hacerme sentir tan especial.</p>
+                <p>Espero que este pequeño detalle te haga sonreír tanto como tú me haces sonreír a mí.</p>
+                <p style="text-align: right; font-family: 'Dancing Script', cursive; font-size: 1.4rem;">Con todo mi amor, <br />Tu chico</p>
+            </div>
+            <button class="btn-confeti" id="btnConfeti">✨ ¡Presiona para una sorpresa! ✨</button>
+            <div class="mensaje-oculto" id="mensajeOculto">Por muchos meses y años más a tu lado. ¡Te amo! 💖</div>
+        </section>
 
     </div>
 
-    <!-- ===== JAVASCRIPT (ver Parte 2) ===== -->
-    <script>
-        // ===== CÓDIGO JS (ver Parte 2) =====
-    </script>
+    <!-- Enlace al JavaScript externo -->
+    <script src="script.js"></script>
 </body>
 </html>
-/* ===== RESET Y BASE ===== */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Quicksand', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 1.5rem;
-    background: #fcf4f6;
-    background: linear-gradient(135deg, #fce4ec, #fff0f5, #f8e8ee);
-    background-size: 300% 300%;
-    animation: gradientBG 12s ease-in-out infinite;
-}
-
-@keyframes gradientBG {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-.container {
-    max-width: 1000px;
-    width: 100%;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(6px);
-    border-radius: 3rem 3rem 2rem 2rem;
-    box-shadow: 0 30px 60px rgba(136, 14, 79, 0.12);
-    padding: 2rem 2rem 3rem;
-    position: relative;
-    overflow: hidden;
-    z-index: 2;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.container::before {
-    content: "🌸";
-    font-size: 20rem;
-    position: absolute;
-    bottom: -6rem;
-    right: -6rem;
-    opacity: 0.05;
-    transform: rotate(20deg);
-    pointer-events: none;
-    z-index: 0;
-}
-.container::after {
-    content: "🌷";
-    font-size: 16rem;
-    position: absolute;
-    top: -4rem;
-    left: -5rem;
-    opacity: 0.04;
-    transform: rotate(-10deg);
-    pointer-events: none;
-    z-index: 0;
-}
-
-/* ===== HERO ===== */
-.hero {
-    text-align: center;
-    padding: 0.5rem 0 1.5rem;
-    position: relative;
-    z-index: 1;
-}
-.hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 3.4rem;
-    font-weight: 700;
-    color: #7a1f3d;
-    letter-spacing: 1px;
-    margin-bottom: 0.2rem;
-}
-.hero h1 span {
-    background: linear-gradient(135deg, #e8a0b4, #c95a7a);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-.hero .subtitle {
-    font-size: 1.3rem;
-    font-weight: 300;
-    color: #7a4b5a;
-    border-top: 1px solid #f0d6de;
-    border-bottom: 1px solid #f0d6de;
-    display: inline-block;
-    padding: 0.3rem 2rem;
-    letter-spacing: 0.5px;
-    margin-bottom: 1.8rem;
-}
-.photo-wrapper {
-    display: flex;
-    justify-content: center;
-    margin: 1rem 0 0.5rem;
-}
-.photo-wrapper img {
-    width: 200px;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 50%;
-    border: 6px solid white;
-    box-shadow: 0 16px 30px -8px rgba(136, 14, 79, 0.25);
-    transition: transform 0.4s ease, box-shadow 0.4s ease;
-}
-.photo-wrapper img:hover {
-    transform: scale(1.03) rotate(-2deg);
-    box-shadow: 0 24px 44px -10px rgba(136, 14, 79, 0.35);
-}
-
-/* ===== CONTADOR ===== */
-.counter-section {
-    background: rgba(255, 245, 247, 0.6);
-    backdrop-filter: blur(4px);
-    border-radius: 2.5rem;
-    padding: 1.8rem 1.5rem;
-    margin: 2rem 0 2.8rem;
-    border: 1px solid rgba(255, 200, 210, 0.3);
-    text-align: center;
-    position: relative;
-    z-index: 1;
-}
-.counter-section h2 {
-    font-weight: 300;
-    font-size: 1.2rem;
-    letter-spacing: 2px;
-    color: #7a4b5a;
-    margin-bottom: 1rem;
-}
-.counter-grid {
-    display: flex;
-    justify-content: center;
-    gap: 1.8rem;
-    flex-wrap: wrap;
-}
-.counter-item {
-    background: white;
-    padding: 0.6rem 1.4rem;
-    border-radius: 3rem;
-    min-width: 90px;
-    box-shadow: 0 4px 12px rgba(136, 14, 79, 0.06);
-    border: 1px solid #fce4ec;
-}
-.counter-item .number {
-    font-family: 'Playfair Display', serif;
-    font-size: 3rem;
-    font-weight: 700;
-    color: #a13d5f;
-    display: block;
-    line-height: 1.2;
-}
-.counter-item .label {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: #b58a9a;
-    font-weight: 600;
-}
-
-/* ===== TIMELINE ===== */
-.timeline-section {
-    margin: 3rem 0 2.5rem;
-    position: relative;
-    z-index: 1;
-}
-.timeline-section h2 {
-    text-align: center;
-    font-family: 'Playfair Display', serif;
-    font-weight: 400;
-    font-size: 2.4rem;
-    color: #7a1f3d;
-    margin-bottom: 2.5rem;
-}
-.timeline {
-    display: flex;
-    flex-direction: column;
-    gap: 1.8rem;
-    padding-left: 1.8rem;
-    border-left: 3px solid #f0ceda;
-    position: relative;
-}
-.timeline::before {
-    content: "💐";
-    position: absolute;
-    left: -1.5rem;
-    top: -0.8rem;
-    font-size: 2rem;
-    background: #fcf4f6;
-    padding: 0 0.3rem;
-}
-.timeline-item {
-    background: white;
-    border-radius: 1.8rem 1.8rem 1.8rem 0.8rem;
-    padding: 1.2rem 1.8rem;
-    box-shadow: 0 6px 16px rgba(136, 14, 79, 0.05);
-    border-left: 5px solid #c95a7a;
-    transition: transform 0.25s ease, box-shadow 0.3s ease;
-}
-.timeline-item:hover {
-    transform: translateX(8px);
-    box-shadow: 0 12px 28px rgba(136, 14, 79, 0.10);
-}
-.timeline-item .date {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #b54d6f;
-    letter-spacing: 0.5px;
-    display: inline-block;
-    background: #fce4ec;
-    padding: 0.1rem 1rem;
-    border-radius: 2rem;
-    margin-bottom: 0.4rem;
-}
-.timeline-item .title {
-    font-weight: 700;
-    font-size: 1.2rem;
-    color: #4a2e38;
-}
-.timeline-item .detail {
-    font-weight: 300;
-    color: #6d4b58;
-    font-size: 0.95rem;
-    margin-top: 0.2rem;
-}
-.timeline-item .detail i {
-    color: #b54d6f;
-    font-style: normal;
-    background: #fdeff3;
-    padding: 0.1rem 0.6rem;
-    border-radius: 1rem;
-}
-
-/* ===== GUSTOS ===== */
-.likes-section {
-    background: rgba(255, 240, 244, 0.5);
-    border-radius: 2.5rem;
-    padding: 2rem 1.8rem;
-    margin: 2.5rem 0;
-    border: 1px solid #fadce6;
-    backdrop-filter: blur(2px);
-    position: relative;
-    z-index: 1;
-}
-.likes-section h2 {
-    text-align: center;
-    font-family: 'Playfair Display', serif;
-    font-weight: 400;
-    font-size: 2.2rem;
-    color: #7a1f3d;
-    margin-bottom: 1.5rem;
-}
-.likes-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2rem;
-}
-.like-card {
-    background: white;
-    border-radius: 2.5rem;
-    padding: 1.5rem 2rem;
-    min-width: 160px;
-    text-align: center;
-    box-shadow: 0 8px 20px rgba(136, 14, 79, 0.06);
-    border: 1px solid #fce4ec;
-    transition: all 0.3s ease;
-}
-.like-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 16px 36px rgba(136, 14, 79, 0.12);
-}
-.like-card .icon {
-    font-size: 3.5rem;
-    display: block;
-    margin-bottom: 0.3rem;
-}
-.like-card .name {
-    font-weight: 700;
-    color: #4a2e38;
-    font-size: 1.2rem;
-}
-.like-card .desc {
-    font-size: 0.9rem;
-    color: #7a4b5a;
-    font-weight: 300;
-}
-.like-card .highlight {
-    background: #fce4ec;
-    padding: 0.1rem 0.8rem;
-    border-radius: 2rem;
-    font-weight: 600;
-    color: #a13d5f;
-    display: inline-block;
-    margin-top: 0.3rem;
-    font-size: 0.8rem;
-}
-
-/* ===== CARTA ===== */
-.letter-section {
-    margin: 3rem 0 2rem;
-    background: rgba(255, 248, 250, 0.6);
-    border-radius: 2.5rem;
-    padding: 2rem 2rem 1.5rem;
-    border: 1px solid #fadce6;
-    position: relative;
-    z-index: 1;
-    backdrop-filter: blur(2px);
-}
-.letter-section h2 {
-    font-family: 'Playfair Display', serif;
-    font-weight: 400;
-    font-size: 2.2rem;
-    color: #7a1f3d;
-    text-align: center;
-    margin-bottom: 0.8rem;
-}
-.btn-carta {
-    display: block;
-    margin: 0 auto 1.2rem;
-    background: transparent;
-    border: 2px solid #b54d6f;
-    color: #b54d6f;
-    font-family: 'Quicksand', sans-serif;
-    font-weight: 600;
-    font-size: 1rem;
-    padding: 0.6rem 2.2rem;
-    border-radius: 4rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    letter-spacing: 1px;
-}
-.btn-carta:hover {
-    background: #b54d6f;
-    color: white;
-    box-shadow: 0 6px 16px rgba(136, 14, 79, 0.2);
-}
-.letter-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.7s ease, padding 0.5s ease, opacity 0.5s ease;
-    opacity: 0;
-    padding: 0 1rem;
-    background: white;
-    border-radius: 2rem;
-    box-shadow: 0 4px 12px rgba(136, 14, 79, 0.04);
-    border-left: 4px solid #f0ceda;
-    margin: 0 auto;
-    max-width: 700px;
-}
-.letter-content.open {
-    max-height: 500px;
-    opacity: 1;
-    padding: 1.8rem 2rem;
-}
-.letter-content .signature {
-    display: block;
-    text-align: right;
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: 1.1rem;
-    color: #7a1f3d;
-    margin-top: 0.8rem;
-}
-
-/* ===== BOTÓN SORPRESA ===== */
-.btn-sorpresa {
-    display: block;
-    margin: 1.5rem auto 0;
-    background: linear-gradient(145deg, #b54d6f, #8f3a57);
-    border: none;
-    color: white;
-    font-family: 'Quicksand', sans-serif;
-    font-weight: 600;
-    font-size: 1.2rem;
-    padding: 0.9rem 2.8rem;
-    border-radius: 4rem;
-    box-shadow: 0 8px 20px rgba(136, 14, 79, 0.25);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    letter-spacing: 1px;
-}
-.btn-sorpresa:hover {
-    transform: scale(1.05);
-    box-shadow: 0 12px 32px rgba(136, 14, 79, 0.35);
-}
-.secret-message {
-    margin-top: 1.5rem;
-    padding: 0 2rem;
-    background: rgba(255, 240, 244, 0.7);
-    border-radius: 2rem;
-    border: 2px dashed #d49aa8;
-    text-align: center;
-    font-size: 1.2rem;
-    color: #7a1f3d;
-    font-weight: 500;
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    transition: max-height 0.8s ease, opacity 0.6s ease, padding 0.4s ease;
-}
-.secret-message.show {
-    max-height: 300px;
-    opacity: 1;
-    padding: 1.8rem 2rem;
-}
-.secret-message .heart {
-    color: #c95a7a;
-    font-size: 1.8rem;
-    display: inline-block;
-    animation: pulse 1.2s infinite;
-}
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-}
-
-/* ===== COMPARTIR ===== */
-.share-section {
-    text-align: center;
-    margin-top: 2.5rem;
-    position: relative;
-    z-index: 1;
-}
-.btn-share {
-    background: transparent;
-    border: 1px solid #d49aa8;
-    color: #7a4b5a;
-    padding: 0.5rem 1.8rem;
-    border-radius: 3rem;
-    font-family: 'Quicksand', sans-serif;
-    font-weight: 400;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-.btn-share:hover {
-    background: #7a4b5a;
-    color: white;
-    border-color: #7a4b5a;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 700px) {
-    .container { padding: 1.2rem 1rem 2rem; border-radius: 2rem; }
-    .hero h1 { font-size: 2.4rem; }
-    .hero .subtitle { font-size: 1rem; padding: 0.2rem 1rem; }
-    .photo-wrapper img { width: 150px; height: 150px; }
-    .counter-grid { gap: 0.8rem; }
-    .counter-item { min-width: 65px; padding: 0.3rem 0.8rem; }
-    .counter-item .number { font-size: 2.2rem; }
-    .timeline { padding-left: 1rem; }
-    .timeline-item { padding: 0.8rem 1.2rem; }
-    .likes-grid { gap: 1rem; }
-    .like-card { min-width: 130px; padding: 1rem 1.2rem; }
-    .letter-content.open { padding: 1.2rem 1.2rem; }
-    .btn-sorpresa { font-size: 1rem; padding: 0.7rem 2rem; }
-    .btn-carta { font-size: 0.9rem; padding: 0.5rem 1.8rem; }
-}
-@media (max-width: 450px) {
-    .hero h1 { font-size: 2rem; }
-    .counter-item .number { font-size: 1.8rem; }
-    .counter-item .label { font-size: 0.65rem; }
-}
-
-/* ===== CONFETI ===== */
-.confetti-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 9999;
-    overflow: hidden;
-}
-.confetti {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    opacity: 0.8;
-    animation: fall linear forwards;
-}
-@keyframes fall {
-    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
-}
-
-/* ===== CORAZONES FLOTANDO ===== */
-.floating-hearts {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 1;
-    overflow: hidden;
-}
-.heart-float {
-    position: absolute;
-    font-size: 1.2rem;
-    animation: floatUp linear infinite;
-    opacity: 0.3;
-}
-@keyframes floatUp {
-    0% { transform: translateY(100vh) rotate(0deg); opacity: 0.1; }
-    100% { transform: translateY(-20vh) rotate(360deg); opacity: 0.6; }
-}
-```
-
-JavaScript (para pegar dentro de <script>)
-
-```javascript
-(function() {
-    'use strict';
-
-    // ---- CONTADOR ----
-    const startDate = new Date(2026, 2, 19);
-    const daysEl = document.getElementById('days');
-    const hoursEl = document.getElementById('hours');
-    const minutesEl = document.getElementById('minutes');
-    const secondsEl = document.getElementById('seconds');
-
-    function updateCounter() {
-        const now = new Date();
-        let diff = now - startDate;
-        if (diff < 0) diff = 0;
-
-        const seconds = Math.floor(diff / 1000);
-        const minutes = Math.floor(seconds / 60);
-        const hours = Math.floor(minutes / 60);
-        const days = Math.floor(hours / 24);
-
-        daysEl.textContent = String(days).padStart(2, '0');
-        hoursEl.textContent = String(hours % 24).padStart(2, '0');
-        minutesEl.textContent = String(minutes % 60).padStart(2, '0');
-        secondsEl.textContent = String(seconds % 60).padStart(2, '0');
-    }
-
-    updateCounter();
-    setInterval(updateCounter, 1000);
-
-    // ---- CARTA DESPLEGABLE ----
-    const btnCarta = document.getElementById('btnCarta');
-    const letterContent = document.getElementById('letterContent');
-    let cartaAbierta = false;
-
-    btnCarta.addEventListener('click', function() {
-        cartaAbierta = !cartaAbierta;
-        letterContent.classList.toggle('open');
-        btnCarta.textContent = cartaAbierta ? '📕 Cerrar carta' : '📩 Abrir carta';
-    });
-
-    // ---- SORPRESA + CONFETI ----
-    const btnSorpresa = document.getElementById('btnSorpresa');
-    const secretMsg = document.getElementById('secretMessage');
-    let sorpresaVisible = false;
-
-    btnSorpresa.addEventListener('click', function() {
-        sorpresaVisible = !sorpresaVisible;
-        secretMsg.classList.toggle('show');
-
-        if (sorpresaVisible) {
-            btnSorpresa.textContent = '💝 Ocultar sorpresa';
-            lanzarConfeti();
-        } else {
-            btnSorpresa.textContent = '🎁 Presiona para una sorpresa';
-        }
-    });
-
-    // ---- CONFETI ----
-    function lanzarConfeti() {
-        const container = document.createElement('div');
-        container.className = 'confetti-container';
-        document.body.appendChild(container);
-
-        const colores = ['#ff6b81', '#ff9ff3', '#ffd93d', '#6bcb77', '#4d96ff', '#ff6b6b', '#c56cf0'];
-        for (let i = 0; i < 80; i++) {
-            const confetti = document.createElement('div');
-            confetti.className = 'confetti';
-            const size = Math.random() * 8 + 6;
-            confetti.style.width = size + 'px';
-            confetti.style.height = size + 'px';
-            confetti.style.background = colores[Math.floor(Math.random() * colores.length)];
-            confetti.style.left = Math.random() * 100 + '%';
-            confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-            confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
-            confetti.style.animationDelay = (Math.random() * 1.5) + 's';
-            container.appendChild(confetti);
-        }
-
-        setTimeout(() => {
-            container.remove();
-        }, 4500);
-    }
-
-    // ---- CORAZONES FLOTANDO ----
-    const heartsContainer = document.getElementById('floatingHearts');
-    const emojis = ['❤️', '💕', '💖', '🌸', '🌷'];
-    for (let i = 0; i < 18; i++) {
-        const heart = document.createElement('div');
-        heart.className = 'heart-float';
-        heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-        heart.style.left = Math.random() * 100 + '%';
-        heart.style.fontSize = (Math.random() * 1.2 + 0.8) + 'rem';
-        heart.style.animationDuration = (Math.random() * 18 + 12) + 's';
-        heart.style.animationDelay = (Math.random() * 15) + 's';
-        heartsContainer.appendChild(heart);
-    }
-
-    // ---- COMPARTIR ----
-    const btnShare = document.getElementById('btnShare');
-    btnShare.addEventListener('click', function() {
-        const url = window.location.href;
-        if (navigator.share) {
-            navigator.share({
-                title: 'Felices 5 meses, mi amor 💕',
-                text: 'Mira este hermoso detalle que hice para celebrar nuestros 5 meses juntos.',
-                url: url,
-            }).catch(() => {});
-        } else {
-            navigator.clipboard.writeText(url).then(() => {
-                alert('¡Enlace copiado al portapapeles! Compártelo con quien quieras 💖');
-            }).catch(() => {
-                prompt('Copia este enlace:', url);
-            });
-        }
-    });
-
-})();
