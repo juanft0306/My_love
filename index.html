@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@300;400;600;700&family=Lora:ital@0;1&display=swap" rel="stylesheet" />
-    <!-- Enlace al CSS externo -->
     <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -29,17 +28,160 @@
         <button id="playBtn">▶️</button>
     </div>
 
+    <!-- BOTÓN DE CONFIGURACIÓN (engranaje) -->
+    <button id="configBtn" class="config-btn" title="Configuración">⚙️</button>
+
+    <!-- MODAL DE CONFIGURACIÓN -->
+    <div id="configModal" class="config-modal">
+        <div class="config-modal-content">
+            <span class="config-close" id="configClose">&times;</span>
+            <h2>⚙️ Configuración del Sitio</h2>
+            <form id="configForm">
+                <!-- Fecha de inicio -->
+                <div class="config-group">
+                    <label>Fecha de inicio (para el contador):</label>
+                    <input type="datetime-local" id="cfgFechaInicio" />
+                </div>
+
+                <!-- Título y subtítulo -->
+                <div class="config-group">
+                    <label>Título principal:</label>
+                    <input type="text" id="cfgTitulo" />
+                </div>
+                <div class="config-group">
+                    <label>Subtítulo:</label>
+                    <input type="text" id="cfgSubtitulo" />
+                </div>
+
+                <!-- Foto polaroid -->
+                <div class="config-group">
+                    <label>URL de la foto (polaroid):</label>
+                    <input type="text" id="cfgFoto" />
+                </div>
+
+                <!-- Canción -->
+                <div class="config-group">
+                    <label>URL de la canción (MP3):</label>
+                    <input type="text" id="cfgCancion" />
+                </div>
+
+                <!-- Colores -->
+                <div class="config-group">
+                    <label>Color vino (principal):</label>
+                    <input type="color" id="cfgVino" />
+                </div>
+                <div class="config-group">
+                    <label>Color rosa (fondo de tarjetas):</label>
+                    <input type="color" id="cfgRosa" />
+                </div>
+
+                <!-- Textos de la línea de tiempo -->
+                <div class="config-group">
+                    <label>Evento 1 - Fecha:</label>
+                    <input type="text" id="cfgEvento1Fecha" />
+                </div>
+                <div class="config-group">
+                    <label>Evento 1 - Título:</label>
+                    <input type="text" id="cfgEvento1Titulo" />
+                </div>
+                <div class="config-group">
+                    <label>Evento 1 - Descripción:</label>
+                    <input type="text" id="cfgEvento1Desc" />
+                </div>
+                <div class="config-group">
+                    <label>Evento 2 - Fecha:</label>
+                    <input type="text" id="cfgEvento2Fecha" />
+                </div>
+                <div class="config-group">
+                    <label>Evento 2 - Título:</label>
+                    <input type="text" id="cfgEvento2Titulo" />
+                </div>
+                <div class="config-group">
+                    <label>Evento 2 - Descripción:</label>
+                    <input type="text" id="cfgEvento2Desc" />
+                </div>
+                <div class="config-group">
+                    <label>Evento 3 - Fecha:</label>
+                    <input type="text" id="cfgEvento3Fecha" />
+                </div>
+                <div class="config-group">
+                    <label>Evento 3 - Título:</label>
+                    <input type="text" id="cfgEvento3Titulo" />
+                </div>
+                <div class="config-group">
+                    <label>Evento 3 - Descripción:</label>
+                    <input type="text" id="cfgEvento3Desc" />
+                </div>
+
+                <!-- Acordeón (3 items) -->
+                <div class="config-group">
+                    <label>Acordeón 1 - Título:</label>
+                    <input type="text" id="cfgAcordeon1Titulo" />
+                </div>
+                <div class="config-group">
+                    <label>Acordeón 1 - Contenido:</label>
+                    <input type="text" id="cfgAcordeon1Contenido" />
+                </div>
+                <div class="config-group">
+                    <label>Acordeón 2 - Título:</label>
+                    <input type="text" id="cfgAcordeon2Titulo" />
+                </div>
+                <div class="config-group">
+                    <label>Acordeón 2 - Contenido:</label>
+                    <input type="text" id="cfgAcordeon2Contenido" />
+                </div>
+                <div class="config-group">
+                    <label>Acordeón 3 - Título:</label>
+                    <input type="text" id="cfgAcordeon3Titulo" />
+                </div>
+                <div class="config-group">
+                    <label>Acordeón 3 - Contenido:</label>
+                    <input type="text" id="cfgAcordeon3Contenido" />
+                </div>
+
+                <!-- Gustos especiales -->
+                <div class="config-group">
+                    <label>Gusto 1 - Título (ej: Cheetos):</label>
+                    <input type="text" id="cfgGusto1Titulo" />
+                </div>
+                <div class="config-group">
+                    <label>Gusto 1 - Descripción:</label>
+                    <input type="text" id="cfgGusto1Desc" />
+                </div>
+                <div class="config-group">
+                    <label>Gusto 2 - Título (ej: Lirios):</label>
+                    <input type="text" id="cfgGusto2Titulo" />
+                </div>
+                <div class="config-group">
+                    <label>Gusto 2 - Descripción:</label>
+                    <input type="text" id="cfgGusto2Desc" />
+                </div>
+
+                <!-- Carta de amor -->
+                <div class="config-group">
+                    <label>Carta de amor (texto completo):</label>
+                    <textarea id="cfgCarta" rows="6"></textarea>
+                </div>
+
+                <div class="config-actions">
+                    <button type="button" id="configGuardar" class="btn-guardar">💾 Guardar Cambios</button>
+                    <button type="button" id="configRestaurar" class="btn-restaurar">↩️ Restaurar por Defecto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- CONTENEDOR PRINCIPAL -->
     <div class="container">
 
         <!-- HERO -->
         <section class="hero">
-            <h1>Felices 5 Meses, Mi Amor</h1>
-            <div class="subtitulo">Cada día a tu lado es un regalo</div>
+            <h1 id="tituloPrincipal">Felices 5 Meses, Mi Amor</h1>
+            <div class="subtitulo" id="subtituloPrincipal">Cada día a tu lado es un regalo</div>
 
-            <!-- Marco Polaroid (cambiar src por tu foto) -->
+            <!-- Marco Polaroid -->
             <div class="polaroid">
-                <img src="https://via.placeholder.com/400x400/f9e0e0/7a2e3e?text=Tu+Foto+Aqui" alt="Nuestra foto" />
+                <img id="fotoPolaroid" src="https://via.placeholder.com/400x400/f9e0e0/7a2e3e?text=Tu+Foto+Aqui" alt="Nuestra foto" />
                 <div class="caption">Nosotros ❤️</div>
             </div>
 
@@ -63,19 +205,19 @@
         <!-- LÍNEA DE TIEMPO -->
         <section class="timeline">
             <div class="evento">
-                <div class="fecha">24 de diciembre de 2025</div>
-                <div class="titulo-evento">El inicio de todo</div>
-                <div class="descripcion">La primera vez que ella me habló. El mejor regalo de Navidad.</div>
+                <div class="fecha" id="ev1Fecha">24 de diciembre de 2025</div>
+                <div class="titulo-evento" id="ev1Titulo">El inicio de todo</div>
+                <div class="descripcion" id="ev1Desc">La primera vez que ella me habló. El mejor regalo de Navidad.</div>
             </div>
             <div class="evento">
-                <div class="fecha">20 de enero de 2026</div>
-                <div class="titulo-evento">Nuestra primera cita en persona</div>
-                <div class="descripcion">Con ese suéter azul que me regaló y que aún guardo con cariño.</div>
+                <div class="fecha" id="ev2Fecha">20 de enero de 2026</div>
+                <div class="titulo-evento" id="ev2Titulo">Nuestra primera cita en persona</div>
+                <div class="descripcion" id="ev2Desc">Con ese suéter azul que me regaló y que aún guardo con cariño.</div>
             </div>
             <div class="evento">
-                <div class="fecha">19 de marzo de 2026</div>
-                <div class="titulo-evento">El día que le pedí que fuera mi novia</div>
-                <div class="descripcion">Después de invitarla a comer pizza, supo que sería para siempre.</div>
+                <div class="fecha" id="ev3Fecha">19 de marzo de 2026</div>
+                <div class="titulo-evento" id="ev3Titulo">El día que le pedí que fuera mi novia</div>
+                <div class="descripcion" id="ev3Desc">Después de invitarla a comer pizza, supo que sería para siempre.</div>
             </div>
         </section>
 
@@ -83,52 +225,52 @@
         <section class="cosas-amo">
             <h2>Cosas que amo de ti</h2>
             <div class="acordeon-item">
-                <div class="acordeon-header">
-                    <span>❤️ Tu sonrisa ilumina mi mundo</span>
+                <div class="acordeon-header" id="acordeon1Header">
+                    <span id="acordeon1Titulo">❤️ Tu sonrisa ilumina mi mundo</span>
                     <span class="icono">➕</span>
                 </div>
-                <div class="acordeon-contenido">
+                <div class="acordeon-contenido" id="acordeon1Contenido">
                     <p>Cuando sonríes, hasta el día más gris se vuelve soleado. Es mi razón para sonreír siempre.</p>
                 </div>
             </div>
             <div class="acordeon-item">
-                <div class="acordeon-header">
-                    <span>💕 Tu forma de verme</span>
+                <div class="acordeon-header" id="acordeon2Header">
+                    <span id="acordeon2Titulo">💕 Tu forma de verme</span>
                     <span class="icono">➕</span>
                 </div>
-                <div class="acordeon-contenido">
+                <div class="acordeon-contenido" id="acordeon2Contenido">
                     <p>Esa mirada tuya que dice más que mil palabras. Me hace sentir el hombre más afortunado.</p>
                 </div>
             </div>
             <div class="acordeon-item">
-                <div class="acordeon-header">
-                    <span>✨ Tu carácter y tu pasión</span>
+                <div class="acordeon-header" id="acordeon3Header">
+                    <span id="acordeon3Titulo">✨ Tu carácter y tu pasión</span>
                     <span class="icono">➕</span>
                 </div>
-                <div class="acordeon-contenido">
+                <div class="acordeon-contenido" id="acordeon3Contenido">
                     <p>Eres fuerte, decidida y sueñas en grande. Admiro cada parte de ti, incluso cuando te enojas.</p>
                 </div>
             </div>
         </section>
 
-        <!-- GUSTOS ESPECIALES: Cheetos y Lirios -->
+        <!-- GUSTOS ESPECIALES -->
         <section class="gustos">
             <div class="gusto-card">
                 <span class="emoji-gusto">🔥</span>
-                <h3>Cheetos Flamin' Hot</h3>
-                <p>¡No hay día que no disfrutes unos buenos Cheetos! Ese toque picante te encanta, y a mí me encanta verte feliz cuando los comes.</p>
+                <h3 id="gusto1Titulo">Cheetos Flamin' Hot</h3>
+                <p id="gusto1Desc">¡No hay día que no disfrutes unos buenos Cheetos! Ese toque picante te encanta, y a mí me encanta verte feliz cuando los comes.</p>
             </div>
             <div class="gusto-card">
                 <span class="emoji-gusto">🌸</span>
-                <h3>Lirios</h3>
-                <p>Tus flores favoritas, tan elegantes y dulces como tú. Siempre que veo uno pienso en ti.</p>
+                <h3 id="gusto2Titulo">Lirios</h3>
+                <p id="gusto2Desc">Tus flores favoritas, tan elegantes y dulces como tú. Siempre que veo uno pienso en ti.</p>
             </div>
         </section>
 
-        <!-- CARTA DE AMOR Y BOTÓN DE CONFETI -->
+        <!-- CARTA DE AMOR -->
         <section class="carta-final">
             <h2>Para ti, mi amor</h2>
-            <div class="carta-texto">
+            <div class="carta-texto" id="cartaTexto">
                 <p>Han pasado 5 meses desde que decidimos emprender este viaje juntos, y cada día confirmo que fuiste la mejor elección de mi vida.</p>
                 <p>Eres mi refugio, mi alegría y mi mayor inspiración. Gracias por cada sonrisa, cada abrazo y por hacerme sentir tan especial.</p>
                 <p>Espero que este pequeño detalle te haga sonreír tanto como tú me haces sonreír a mí.</p>
@@ -140,7 +282,6 @@
 
     </div>
 
-    <!-- Enlace al JavaScript externo -->
     <script src="script.js"></script>
 </body>
 </html>
