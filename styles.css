@@ -1,0 +1,446 @@
+/* ---------- RESET Y BASE ---------- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Quicksand', sans-serif;
+    background: #fdf6f0;
+    color: #3d1e2b;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+}
+
+/* ---------- PALETA DE COLORES ---------- */
+:root {
+    --rose: #f9e0e0;
+    --rose-claro: #fce9e9;
+    --vino: #7a2e3e;
+    --vino-claro: #b15a6e;
+    --blanco: #ffffff;
+    --sombra: rgba(122, 46, 62, 0.15);
+}
+
+/* ---------- ANIMACIÓN DE LIRIOS FLOTANTES ---------- */
+.lirio-flotante {
+    position: fixed;
+    font-size: 2rem;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+    animation: flotar 12s infinite alternate ease-in-out;
+}
+.lirio-flotante:nth-child(1) { left: 5%; top: 10%; animation-delay: 0s; font-size: 2.4rem; }
+.lirio-flotante:nth-child(2) { left: 85%; top: 20%; animation-delay: 3s; font-size: 1.8rem; }
+.lirio-flotante:nth-child(3) { left: 15%; top: 60%; animation-delay: 6s; font-size: 2.2rem; }
+.lirio-flotante:nth-child(4) { left: 70%; top: 70%; animation-delay: 2s; font-size: 2.8rem; }
+.lirio-flotante:nth-child(5) { left: 45%; top: 45%; animation-delay: 4s; font-size: 2rem; }
+
+@keyframes flotar {
+    0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+    100% { transform: translate(30px, -30px) rotate(15deg) scale(1.1); }
+}
+
+/* ---------- CONTENEDOR PRINCIPAL ---------- */
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+    position: relative;
+    z-index: 2;
+}
+
+/* ---------- HERO / ENCABEZADO ---------- */
+.hero {
+    text-align: center;
+    padding: 3rem 0 2rem;
+    position: relative;
+}
+.hero h1 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 3.8rem;
+    color: var(--vino);
+    text-shadow: 2px 4px 12px rgba(122, 46, 62, 0.2);
+    margin-bottom: 0.2rem;
+    letter-spacing: 1px;
+}
+.hero .subtitulo {
+    font-family: 'Lora', serif;
+    font-size: 1.2rem;
+    color: var(--vino-claro);
+    font-style: italic;
+    margin-bottom: 2rem;
+    border-bottom: 2px dashed var(--rose);
+    padding-bottom: 0.8rem;
+    display: inline-block;
+}
+
+/* Marco Polaroid */
+.polaroid {
+    background: var(--blanco);
+    padding: 12px 12px 40px 12px;
+    box-shadow: 0 16px 40px var(--sombra);
+    border-radius: 6px;
+    transform: rotate(-2deg);
+    transition: transform 0.3s ease;
+    max-width: 320px;
+    margin: 0 auto 1.5rem;
+}
+.polaroid:hover {
+    transform: rotate(0deg) scale(1.02);
+}
+.polaroid img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+    display: block;
+}
+.polaroid .caption {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.1rem;
+    color: var(--vino);
+    text-align: center;
+    margin-top: 8px;
+    letter-spacing: 1px;
+}
+
+/* Indicador "Desliza hacia abajo" */
+.scroll-indicator {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--vino-claro);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    animation: bounceDown 2s infinite;
+}
+.scroll-indicator span {
+    display: block;
+    font-size: 1.8rem;
+    margin-top: 2px;
+}
+@keyframes bounceDown {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(12px); }
+}
+
+/* ---------- CONTADOR DE TIEMPO ---------- */
+.contador {
+    background: var(--blanco);
+    border-radius: 32px;
+    padding: 2rem 1.5rem;
+    margin: 3rem 0;
+    box-shadow: 0 12px 36px var(--sombra);
+    text-align: center;
+}
+.contador h2 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 2.2rem;
+    color: var(--vino);
+    margin-bottom: 1.2rem;
+}
+.contador-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+}
+.tarjeta-tiempo {
+    background: var(--rose);
+    border-radius: 20px;
+    padding: 0.8rem 1.2rem;
+    min-width: 80px;
+    box-shadow: inset 0 -4px 0 var(--vino-claro);
+}
+.tarjeta-tiempo .numero {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--vino);
+    line-height: 1;
+}
+.tarjeta-tiempo .etiqueta {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--vino-claro);
+    font-weight: 600;
+}
+
+/* ---------- LÍNEA DE TIEMPO ---------- */
+.timeline {
+    margin: 4rem 0;
+    position: relative;
+    padding-left: 2rem;
+}
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, var(--vino-claro), var(--rose));
+}
+.evento {
+    position: relative;
+    margin-bottom: 2.8rem;
+    padding-left: 2rem;
+}
+.evento::before {
+    content: '🌸';
+    position: absolute;
+    left: -18px;
+    top: 0px;
+    font-size: 1.8rem;
+    background: var(--blanco);
+    padding: 4px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px var(--rose);
+    line-height: 1;
+}
+.evento .fecha {
+    font-weight: 700;
+    color: var(--vino);
+    font-size: 1rem;
+    background: var(--rose-claro);
+    display: inline-block;
+    padding: 0.2rem 1rem;
+    border-radius: 20px;
+    margin-bottom: 0.3rem;
+}
+.evento .titulo-evento {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.6rem;
+    color: var(--vino);
+    margin: 0.2rem 0;
+}
+.evento .descripcion {
+    font-size: 1rem;
+    color: #4d2a34;
+    line-height: 1.6;
+    background: var(--blanco);
+    padding: 0.6rem 1.2rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px var(--sombra);
+    display: inline-block;
+    max-width: 90%;
+}
+
+/* ---------- SECCIÓN "COSAS QUE AMO" (ACORDEÓN) ---------- */
+.cosas-amo {
+    margin: 4rem 0;
+}
+.cosas-amo h2 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 2.5rem;
+    text-align: center;
+    color: var(--vino);
+    margin-bottom: 2rem;
+}
+.acordeon-item {
+    background: var(--blanco);
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 16px var(--sombra);
+    overflow: hidden;
+    transition: box-shadow 0.3s;
+}
+.acordeon-item:hover {
+    box-shadow: 0 8px 24px var(--sombra);
+}
+.acordeon-header {
+    padding: 1rem 1.8rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    color: var(--vino);
+    background: var(--rose-claro);
+    transition: background 0.3s;
+}
+.acordeon-header:hover {
+    background: var(--rose);
+}
+.acordeon-header .icono {
+    font-size: 1.6rem;
+    transition: transform 0.3s;
+}
+.acordeon-item.abierto .acordeon-header .icono {
+    transform: rotate(45deg);
+}
+.acordeon-contenido {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease, padding 0.3s;
+    padding: 0 1.8rem;
+    background: var(--blanco);
+}
+.acordeon-item.abierto .acordeon-contenido {
+    max-height: 300px;
+    padding: 1.2rem 1.8rem 1.8rem;
+}
+.acordeon-contenido p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #3d1e2b;
+}
+
+/* ---------- SECCIÓN DE GUSTOS (Cheetos y Lirios) ---------- */
+.gustos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.8rem;
+    justify-content: center;
+    margin: 3rem 0;
+}
+.gusto-card {
+    background: var(--blanco);
+    border-radius: 30px;
+    padding: 1.8rem 1.5rem;
+    flex: 1 1 200px;
+    text-align: center;
+    box-shadow: 0 8px 24px var(--sombra);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.gusto-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 36px var(--sombra);
+}
+.gusto-card .emoji-gusto {
+    font-size: 3.5rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+.gusto-card h3 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.8rem;
+    color: var(--vino);
+}
+.gusto-card p {
+    font-size: 0.95rem;
+    color: #5a3542;
+    margin-top: 0.3rem;
+}
+
+/* ---------- REPRODUCTOR DE MÚSICA (flotante) ---------- */
+.music-player {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 1000;
+    background: var(--blanco);
+    border-radius: 60px;
+    padding: 0.6rem 1.2rem 0.6rem 1.8rem;
+    box-shadow: 0 8px 30px rgba(122, 46, 62, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.6);
+}
+.music-player button {
+    background: var(--vino);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.4rem;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(122, 46, 62, 0.3);
+}
+.music-player button:hover {
+    background: var(--vino-claro);
+    transform: scale(1.05);
+}
+.music-player .estado {
+    font-size: 0.8rem;
+    color: var(--vino);
+    font-weight: 600;
+}
+
+/* ---------- CARTA DE AMOR Y BOTÓN DE CONFETI ---------- */
+.carta-final {
+    background: var(--blanco);
+    border-radius: 40px;
+    padding: 2.5rem 2rem;
+    margin: 4rem 0 2rem;
+    box-shadow: 0 12px 40px var(--sombra);
+    text-align: center;
+    border-left: 6px solid var(--vino);
+}
+.carta-final h2 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 2.6rem;
+    color: var(--vino);
+    margin-bottom: 1.2rem;
+}
+.carta-final .carta-texto {
+    font-family: 'Lora', serif;
+    font-size: 1.1rem;
+    line-height: 1.9;
+    color: #3d1e2b;
+    text-align: left;
+    margin-bottom: 2rem;
+}
+.btn-confeti {
+    background: var(--vino);
+    color: white;
+    border: none;
+    padding: 1rem 2.8rem;
+    border-radius: 60px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    box-shadow: 0 8px 24px rgba(122, 46, 62, 0.4);
+    letter-spacing: 1px;
+}
+.btn-confeti:hover {
+    background: var(--vino-claro);
+    transform: scale(1.03);
+}
+.mensaje-oculto {
+    margin-top: 1.8rem;
+    font-family: 'Dancing Script', cursive;
+    font-size: 2rem;
+    color: var(--vino);
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+.mensaje-oculto.visible {
+    opacity: 1;
+}
+
+/* ---------- CONFETI (canvas) ---------- */
+#confeti-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 600px) {
+    .hero h1 { font-size: 2.6rem; }
+    .polaroid { max-width: 250px; }
+    .contador-grid { gap: 0.6rem; }
+    .tarjeta-tiempo { min-width: 65px; padding: 0.5rem 0.8rem; }
+    .tarjeta-tiempo .numero { font-size: 2rem; }
+    .evento .titulo-evento { font-size: 1.3rem; }
+    .gusto-card { flex: 1 1 140px; }
+    .music-player { bottom: 1rem; right: 1rem; padding: 0.4rem 0.8rem; }
+    .music-player button { width: 34px; height: 34px; font-size: 1.2rem; }
+  }
